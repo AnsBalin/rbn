@@ -438,6 +438,7 @@ public class Network implements Serializable{
     for(int i=0; i<numBondingSitesB; i++){
       
       if(bondingSitesB[i] != bondingSiteB){
+        //System.out.printf("J:  %d\n#A:   %d\n#B:   %d\n#C:   %d\n", j,numBondingSitesA,numBondingSitesB, numBondingSitesC);
         bondingSitesC[j] = bondingSitesB[i]+numNodesA;
         j++;
       }

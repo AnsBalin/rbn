@@ -417,13 +417,14 @@ public class Main {
   }
   
   
-  public boolean formBond(Molecule A, Molecule B, Molecule Asub, Molecule Bsub, int bondingSite1, int bondingSite2){
+  public void formBond(Molecule A, Molecule B, Molecule Asub, Molecule Bsub, int bondingSite1, int bondingSite2){
     
-    molsA = A.split(Asub.getMolID());
+    ArrayList<Molecule> molsA = A.split(Asub.getMolID());
     A.unFlagAll();
-    molsB = B.split(Bsub.getMolID());
+    ArrayList<Molecule> molsB = B.split(Bsub.getMolID());
     B.unFlagAll();
     
+    ArrayList<Network> after = new ArrayList<Network>();
     
     after.addAll( moleculeArrToNetworkArr(molsA) );
     after.addAll( moleculeArrToNetworkArr(molsB) );
@@ -437,7 +438,7 @@ public class Main {
     reactants.add(A);
     reactants.add(B);
     
-    //System.out.printf("\n\t"+A.toStringf()+" + "+B.toStringf()+" --> ");
+    System.out.printf("\n\t"+A.toStringf()+" + "+B.toStringf()+" --> ");
     bucket.remove(A);
     bucket.remove(B);
     library.get(A.getID()).decrPop();
@@ -450,7 +451,7 @@ public class Main {
       bucket.add(molsA.get(i));
       products.add(molsA.get(i));
       library.get(molsA.get(i).getID()).incrPop();
-      //System.out.printf(""+molsA.get(i).toStringf()+" + ");
+      System.out.printf(""+molsA.get(i).toStringf()+" + ");
     }
     
     for(int i=0; i<molsB.size(); i++){
@@ -458,7 +459,7 @@ public class Main {
         bucket.add(molsB.get(i));
         products.add(molsB.get(i));
         library.get(molsB.get(i).getID()).incrPop();
-        //System.out.printf(""+molsB.get(i).toStringf()+" + ");
+        System.out.printf(""+molsB.get(i).toStringf()+" + ");
       }
     
     
@@ -475,7 +476,7 @@ public class Main {
     Reaction R = new Reaction(reactants, products);
     int reactionIndex = reactionsUpdate(R);
     reactions.get(reactionIndex).incrCount();
-    if(reactions.get(reactionIndex).getCount()==1){
+    /*if(reactions.get(reactionIndex).getCount()==1){
         String str1="";
         str1 += reactions.get(reactionIndex).getMolReactants().get(0).toStringf()+" + "+
                 reactions.get(reactionIndex).getMolReactants().get(1).toStringf()+" --> ";
@@ -486,9 +487,9 @@ public class Main {
         }
         
         System.out.printf(""+str1+"\n");
-      }
+      }*/
     //System.out.printf(""+products.get(0).toStringf()+"\t%d\n", products.get(0).getID());
-    //System.out.printf(""+bucket.get(bucket.size()-1).toStringf()+"\n");
+    System.out.printf(""+bucket.get(bucket.size()-1).toStringf()+"\n");
     //System.out.printf("index: %d\nreaction #: %d\n", index, products.get(products.size()-).getID());
       //System.out.printf("\t"+reactions.get(reactionIndex).getID()+"\n");
 
@@ -578,20 +579,31 @@ public class Main {
     ArrayList<Molecule> molsA = new ArrayList<Molecule>();
     ArrayList<Molecule> molsB = new ArrayList<Molecule>();
     
+    boolean found=false;
     Molecule Asub, Bsub;
     Network net1, net2;
     
-    int[][] P;
+    double[][] P;
     int[] bondingSites1, bondingSites2;
     int bondingSite1, bondingSite2;
+    double avActivity, avCycleLengthBefore, avCycleLengthAfter, avActivityAfter, Z;
+    
+    bondingSite1=0;
+    bondingSite2=0;
+    avCycleLengthAfter=0;
+    avCycleLengthBefore=0;
+    avActivityAfter=0;
+    Z=0;
+    
     
     A.sortIntoArray(arrayA);
     B.sortIntoArray(arrayB);
     
-    P = new int[arrayA.size()][arrayB.szie()];
+    P = new double[arrayA.size()][arrayB.size()];
     
     before.add(retrieve(A));
     before.add(retrieve(B));
+    //System.out.printf("!!! %d\n", before.size());
     
     if(bspar){}
     
@@ -599,7 +611,7 @@ public class Main {
       
       for(int i=0; i<arrayA.size(); i++){
       
-        for(j=0; j<arrayB.size(); j++){
+        for(int j=0; j<arrayB.size(); j++){
         
           Asub = new Molecule(arrayA.get(i));
           Bsub = new Molecule(arrayB.get(j));
@@ -617,12 +629,16 @@ public class Main {
           // Ordered choosing of bonding site.
           //
           
-          for(int i = bondingSites1.length-1; i>=0; i--){
-            bondingSite1 = net1.getNodes().get(bondingSites1[i]).getFilled()? bondingSite1 : bondingSites1[i];
+          //System.out.printf("%d\t%d\n", bondingSites1.length, bondingSites2.length);
+          
+          for(int k = bondingSites1.length-1; k>=0; k--){
+            //System.out.printf("%d\n", k);
+            bondingSite1 = net1.getNodes().get(bondingSites1[k]).getFilled()? bondingSite1 : bondingSites1[k];
           }
           
-          for(int i = bondingSites2.length-1; i>=0; i--){
-            bondingSite2 = net2.getNodes().get(bondingSites2[i]).getFilled()? bondingSite2 : bondingSites2[i];
+          for(int k = bondingSites2.length-1; k>=0; k--){
+            //System.out.printf("%d\n", k);
+            bondingSite2 = net2.getNodes().get(bondingSites2[k]).getFilled()? bondingSite2 : bondingSites2[k];
             
           }
           
@@ -639,17 +655,17 @@ public class Main {
           
           avActivity = 0;
           
-          for(int i=0; i< before.size(); i++){
+          for(int k=0; k< before.size(); k++){
             
-            avCycleLengthBefore += (double) before.get(i).getCycleLength();
-            avActivity += before.get(i).getActivity();
+            avCycleLengthBefore += (double) before.get(k).getCycleLength();
+            avActivity += before.get(k).getActivity();
             
           }
           
-          for(int i=0; i<after.size(); i++){
+          for(int k=0; k<after.size(); k++){
             
-            avCycleLengthAfter += (double) after.get(i).getCycleLength();
-            avActivity += after.get(i).getActivity();
+            avCycleLengthAfter += (double) after.get(k).getCycleLength();
+            avActivity += after.get(k).getActivity();
             
           }
           
@@ -662,7 +678,7 @@ public class Main {
           
           //System.out.printf("%f\t%f\t%f\n", avCycleLengthBefore, exponent+avCycleLengthBefore, avCycleLengthAfter);
           
-          Z += Math.exp(-exponent/temperature);
+          Z += Math.exp(-exponent/100);
           P[i][j] = Z;
           
         
@@ -670,15 +686,55 @@ public class Main {
         
         
       }
-  
-      rand = Math.rand();
+    
+      /*for(int i=0; (i<arrayA.size())&&(!found); i++){
+        for(int j=0; (j<arrayB.size())&&(!found); j++){
+          System.out.printf("%.6f\t", P[i][j]/(Z+2));
+        }
+        System.out.printf("\n");
+      }*/
+    
+
+      
+      
+      double rand = Math.random();
       
       
       for(int i=0; (i<arrayA.size())&&(!found); i++){
-        for(int j=0; (i<arrayB.size())&&(!found); i++){
-          if(P[i][j]/(Z+1)>rand){
+        for(int j=0; (j<arrayB.size())&&(!found); j++){
+          if(P[i][j]/(Z+2)>rand){
+            //System.out.printf("Done!!\n\n\n");
+            Asub = new Molecule(arrayA.get(i));
+            Bsub = new Molecule(arrayB.get(j));
             
-            formBond(A, B, arrayA.get(i), arrayB.get(j), bondingSite1, bondingSite2);
+            net1 = retrieve(Asub);
+            net2 = retrieve(Bsub);
+            
+            net1.setState(Asub.getState());
+            net2.setState(Bsub.getState());
+            
+            bondingSites1 = net1.getBondingSites();
+            bondingSites2 = net2.getBondingSites();
+            
+            //
+            // Ordered choosing of bonding site.
+            //
+            
+            //System.out.printf("%d\t%d\n", bondingSites1.length, bondingSites2.length);
+            
+            for(int k = bondingSites1.length-1; k>=0; k--){
+              //System.out.printf("%d\n", k);
+              bondingSite1 = net1.getNodes().get(bondingSites1[k]).getFilled()? bondingSite1 : bondingSites1[k];
+            }
+            
+            for(int k = bondingSites2.length-1; k>=0; k--){
+              //System.out.printf("%d\n", k);
+              bondingSite2 = net2.getNodes().get(bondingSites2[k]).getFilled()? bondingSite2 : bondingSites2[k];
+              
+            }
+            
+            //System.out.printf("%d\t%d\t%d\t%d\n", arrayA.get(i).getSize(),arrayB.get(j).getSize(),bondingSite1,bondingSite2);
+            formBond(A, B, Asub, Bsub, bondingSite1, bondingSite2);
             
             found = true;
           
@@ -934,7 +990,7 @@ public class Main {
       B = reactants.get(1);
       
       if(! (A.getID()==0 || B.getID() == 0)){
-        m.collide(A, B);
+        m.collide(A, B, false);
       }
       
       

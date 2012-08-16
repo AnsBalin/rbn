@@ -244,7 +244,7 @@ public class Graph{
       B = reactants.get(1);
       
       if(! (A.getID()==0 || B.getID() == 0)){
-        m.collide(A, B);
+        m.collide(A, B, false);
       }
     }
     
