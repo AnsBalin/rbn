@@ -146,7 +146,7 @@ public class Molecule{
   public String getStringID(){
     return StringID;
   }
-  
+
   public void setID(int NetworkID){
     
     this.NetworkID = NetworkID;
