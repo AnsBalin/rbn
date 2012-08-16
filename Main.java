@@ -450,7 +450,7 @@ public class Main {
     reactants.add(A);
     reactants.add(B);
     
-    //System.out.printf("\n\t"+A.toStringf()+" + "+B.toStringf()+" --> ");
+    System.out.printf("\n\t"+A.toStringf()+" + "+B.toStringf()+" --> ");
     bucket.remove(A);
     bucket.remove(B);
     library.get(A.getID()).decrPop();
@@ -463,7 +463,7 @@ public class Main {
       bucket.add(molsA.get(i));
       products.add(molsA.get(i));
       library.get(molsA.get(i).getID()).incrPop();
-      //System.out.printf(""+molsA.get(i).toStringf()+" + ");
+      System.out.printf(""+molsA.get(i).toStringf()+" + ");
     }
     
     for(int i=0; i<molsB.size(); i++){
@@ -471,7 +471,7 @@ public class Main {
         bucket.add(molsB.get(i));
         products.add(molsB.get(i));
         library.get(molsB.get(i).getID()).incrPop();
-        //System.out.printf(""+molsB.get(i).toStringf()+" + ");
+        System.out.printf(""+molsB.get(i).toStringf()+" + ");
       }
     
     
@@ -515,7 +515,7 @@ public class Main {
       }*/
     
     //System.out.printf(""+products.get(0).toStringf()+"\t%d\n", products.get(0).getID());
-    //System.out.printf(""+bucket.get(bucket.size()-1).toStringf()+"\n");
+    System.out.printf(""+bucket.get(bucket.size()-1).toStringf()+"\n");
     //System.out.printf("index: %d\nreaction #: %d\n", index, products.get(products.size()-).getID());
     //System.out.printf("\t"+reactions.get(reactionIndex).getID()+"\n");
 
@@ -957,10 +957,10 @@ public class Main {
     int temp=0;
     
     
-    for(int i=0; i<200*initPop; i++){
+    for(int i=0; i<50*initPop; i++){
       //System.out.printf("bucket size %d\n", m.getNumSpecies());
       
-      if(i%50==0){
+      if(i%100==0){
         int[] sizeDistrb = m.molecularSizeDistrb();
         double[] tempSizeDistrb = new double[sizeDistrb.length+1];
         tempSizeDistrb[0]=temperature;
@@ -993,7 +993,7 @@ public class Main {
         
         arr[0] = m.getNumReactions()-temp;
         arr[1] = m.getPopulation();
-        //System.out.printf("%d\t%d\t%d\n",i, m.getNumReactions()-temp, m.getPopulation());
+        System.out.printf("%d\t%d\t%d\n",i, m.getNumReactions()-temp, m.getPopulation());
         temp=m.getNumReactions();
         try{
           data.get(5).writeToFile( catStr );

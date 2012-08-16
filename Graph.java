@@ -222,9 +222,9 @@ public class Graph{
   
   public static void main(String args[]){
   
-    Main m = new Main(3, 10, 2, 10);
+    Main m = new Main(10, 10, 2, 1000);
     
-    for(int i=0; i<100; i++){
+    for(int i=0; i<10000; i++){
       if(i%100==0){
         //System.out.printf("%d\n", i);
       }
