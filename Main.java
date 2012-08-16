@@ -419,10 +419,22 @@ public class Main {
   
   public void formBond(Molecule A, Molecule B, Molecule Asub, Molecule Bsub, int bondingSite1, int bondingSite2){
     
+    // Test that matter is being conserved!
+    int x1 = bucket.size();
+    /////////////////
+    
+    
+    A.calculateMoleculeID(0,0,new int[0]);
+    B.calculateMoleculeID(0,0, new int[0]);
     ArrayList<Molecule> molsA = A.split(Asub.getMolID());
     A.unFlagAll();
     ArrayList<Molecule> molsB = B.split(Bsub.getMolID());
     B.unFlagAll();
+    if(molsA.size()>0){
+      //System.out.printf("!!!!!!!!!!!! %d\n", molsA.size());
+      
+    }
+    //System.out.printf(""+Arrays.toString(Asub.getMolID())+"\n");
     
     ArrayList<Network> after = new ArrayList<Network>();
     
@@ -438,7 +450,7 @@ public class Main {
     reactants.add(A);
     reactants.add(B);
     
-    System.out.printf("\n\t"+A.toStringf()+" + "+B.toStringf()+" --> ");
+    //System.out.printf("\n\t"+A.toStringf()+" + "+B.toStringf()+" --> ");
     bucket.remove(A);
     bucket.remove(B);
     library.get(A.getID()).decrPop();
@@ -451,7 +463,7 @@ public class Main {
       bucket.add(molsA.get(i));
       products.add(molsA.get(i));
       library.get(molsA.get(i).getID()).incrPop();
-      System.out.printf(""+molsA.get(i).toStringf()+" + ");
+      //System.out.printf(""+molsA.get(i).toStringf()+" + ");
     }
     
     for(int i=0; i<molsB.size(); i++){
@@ -459,7 +471,7 @@ public class Main {
         bucket.add(molsB.get(i));
         products.add(molsB.get(i));
         library.get(molsB.get(i).getID()).incrPop();
-        System.out.printf(""+molsB.get(i).toStringf()+" + ");
+        //System.out.printf(""+molsB.get(i).toStringf()+" + ");
       }
     
     
@@ -476,6 +488,19 @@ public class Main {
     Reaction R = new Reaction(reactants, products);
     int reactionIndex = reactionsUpdate(R);
     reactions.get(reactionIndex).incrCount();
+    
+    ////////////////
+    int x2=bucket.size();
+    int y=products.size()-2;
+    ////////////////
+    
+    if(x2-x1 != y){
+    
+      System.out.printf("There were %d in the bucket, the reaction consumed %d and then there were %d in the bucket!!!", x1, x2, y);
+    
+    }
+    
+    
     /*if(reactions.get(reactionIndex).getCount()==1){
         String str1="";
         str1 += reactions.get(reactionIndex).getMolReactants().get(0).toStringf()+" + "+
@@ -488,10 +513,11 @@ public class Main {
         
         System.out.printf(""+str1+"\n");
       }*/
+    
     //System.out.printf(""+products.get(0).toStringf()+"\t%d\n", products.get(0).getID());
-    System.out.printf(""+bucket.get(bucket.size()-1).toStringf()+"\n");
+    //System.out.printf(""+bucket.get(bucket.size()-1).toStringf()+"\n");
     //System.out.printf("index: %d\nreaction #: %d\n", index, products.get(products.size()-).getID());
-      //System.out.printf("\t"+reactions.get(reactionIndex).getID()+"\n");
+    //System.out.printf("\t"+reactions.get(reactionIndex).getID()+"\n");
 
     
   }
@@ -571,14 +597,10 @@ public class Main {
   
   public void collide(Molecule A, Molecule B, boolean bspar){
   
-    
+    ArrayList<Network> before = new ArrayList<Network>();
     ArrayList<Molecule> arrayA = new ArrayList<Molecule>();
     ArrayList<Molecule> arrayB = new ArrayList<Molecule>();
-    ArrayList<Network> before = new ArrayList<Network>();
-    ArrayList<Network> after = new ArrayList<Network>();
-    ArrayList<Molecule> molsA = new ArrayList<Molecule>();
-    ArrayList<Molecule> molsB = new ArrayList<Molecule>();
-    
+        
     boolean found=false;
     Molecule Asub, Bsub;
     Network net1, net2;
@@ -590,9 +612,6 @@ public class Main {
     
     bondingSite1=0;
     bondingSite2=0;
-    avCycleLengthAfter=0;
-    avCycleLengthBefore=0;
-    avActivityAfter=0;
     Z=0;
     
     
@@ -612,9 +631,22 @@ public class Main {
       for(int i=0; i<arrayA.size(); i++){
       
         for(int j=0; j<arrayB.size(); j++){
+          
+          
+          ArrayList<Molecule> molsA = new ArrayList<Molecule>();
+          ArrayList<Molecule> molsB = new ArrayList<Molecule>();
+          
+          ArrayList<Network> after = new ArrayList<Network>();
+          
+          avCycleLengthAfter=0;
+          avCycleLengthBefore=0;
+          avActivityAfter=0;
+          
         
-          Asub = new Molecule(arrayA.get(i));
-          Bsub = new Molecule(arrayB.get(j));
+          //Asub = new Molecule(arrayA.get(i));
+          //Bsub = new Molecule(arrayB.get(j));
+          Asub = arrayA.get(i);
+          Bsub = arrayB.get(j);
           
           net1 = retrieve(Asub);
           net2 = retrieve(Bsub);
@@ -678,7 +710,7 @@ public class Main {
           
           //System.out.printf("%f\t%f\t%f\n", avCycleLengthBefore, exponent+avCycleLengthBefore, avCycleLengthAfter);
           
-          Z += Math.exp(-exponent/100);
+          Z += Math.exp(-exponent/temperature);
           P[i][j] = Z;
           
         
@@ -689,11 +721,11 @@ public class Main {
     
       /*for(int i=0; (i<arrayA.size())&&(!found); i++){
         for(int j=0; (j<arrayB.size())&&(!found); j++){
-          System.out.printf("%.6f\t", P[i][j]/(Z+2));
+          System.out.printf("%.3f\t", P[i][j]/(Z+1));
         }
         System.out.printf("\n");
-      }*/
-    
+      }
+      System.out.printf("\n");*/
 
       
       
@@ -702,11 +734,12 @@ public class Main {
       
       for(int i=0; (i<arrayA.size())&&(!found); i++){
         for(int j=0; (j<arrayB.size())&&(!found); j++){
-          if(P[i][j]/(Z+2)>rand){
-            //System.out.printf("Done!!\n\n\n");
-            Asub = new Molecule(arrayA.get(i));
-            Bsub = new Molecule(arrayB.get(j));
-            
+          if(P[i][j]/(Z+1)>rand){
+            //System.out.printf("\nDone!! [%d, %d]\n",i,j);
+            //Asub = new Molecule(arrayA.get(i));
+            //Bsub = new Molecule(arrayB.get(j));
+            Asub = arrayA.get(i);
+            Bsub = arrayB.get(j);
             net1 = retrieve(Asub);
             net2 = retrieve(Bsub);
             
