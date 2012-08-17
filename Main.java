@@ -8,10 +8,13 @@ public class Main {
   private ArrayList<Molecule> bucket = new ArrayList<Molecule>();
   private ArrayList<Reaction> reactions = new ArrayList<Reaction>();
   private int numReactions;
+  private static int catalysisProductIndex=-1;
+  private static boolean foundCatalysisProduct  = false;
   private static double temperature = 1;
   private static boolean reuse = false;
   private static String path = "/data/library/";
   private static String suffix = "";
+  
   
   private int product;
   
@@ -419,9 +422,6 @@ public class Main {
   
   public void formBond(Molecule A, Molecule B, Molecule Asub, Molecule Bsub, int bondingSite1, int bondingSite2){
     
-    // Test that matter is being conserved!
-    int x1 = bucket.size();
-    /////////////////
     
     
     A.calculateMoleculeID(0,0,new int[0]);
@@ -449,8 +449,8 @@ public class Main {
     
     reactants.add(A);
     reactants.add(B);
-    
-    System.out.printf("\n\t"+A.toStringf()+" + "+B.toStringf()+" --> ");
+    //
+    //System.out.printf("\n\t"+A.toStringf()+" + "+B.toStringf()+" --> ");
     bucket.remove(A);
     bucket.remove(B);
     library.get(A.getID()).decrPop();
@@ -463,7 +463,7 @@ public class Main {
       bucket.add(molsA.get(i));
       products.add(molsA.get(i));
       library.get(molsA.get(i).getID()).incrPop();
-      System.out.printf(""+molsA.get(i).toStringf()+" + ");
+      //System.out.printf(""+molsA.get(i).toStringf()+" + ");
     }
     
     for(int i=0; i<molsB.size(); i++){
@@ -471,7 +471,7 @@ public class Main {
         bucket.add(molsB.get(i));
         products.add(molsB.get(i));
         library.get(molsB.get(i).getID()).incrPop();
-        System.out.printf(""+molsB.get(i).toStringf()+" + ");
+        //System.out.printf(""+molsB.get(i).toStringf()+" + ");
       }
     
     
@@ -489,17 +489,6 @@ public class Main {
     int reactionIndex = reactionsUpdate(R);
     reactions.get(reactionIndex).incrCount();
     
-    ////////////////
-    int x2=bucket.size();
-    int y=products.size()-2;
-    ////////////////
-    
-    if(x2-x1 != y){
-    
-      System.out.printf("There were %d in the bucket, the reaction consumed %d and then there were %d in the bucket!!!", x1, x2, y);
-    
-    }
-    
     
     /*if(reactions.get(reactionIndex).getCount()==1){
         String str1="";
@@ -515,7 +504,7 @@ public class Main {
       }*/
     
     //System.out.printf(""+products.get(0).toStringf()+"\t%d\n", products.get(0).getID());
-    System.out.printf(""+bucket.get(bucket.size()-1).toStringf()+"\n");
+    //System.out.printf(""+bucket.get(bucket.size()-1).toStringf()+"\n");
     //System.out.printf("index: %d\nreaction #: %d\n", index, products.get(products.size()-).getID());
     //System.out.printf("\t"+reactions.get(reactionIndex).getID()+"\n");
 
@@ -570,6 +559,13 @@ public class Main {
         A3 = (cAC + cB + cAB + cC)/2 + (aAC + aB + aAB + aC)/4 - (cAC + cB);
         
         if((A2+A3 < A1) && (aC !=0)){
+          
+          
+          if( !(foundCatalysisProduct) ){
+            catalysisProductIndex = AB.getID();
+            foundCatalysisProduct = true;
+            
+          }
           
           System.out.printf("\n\tMolecule %d catalyses the reaction %d + %d --> %d\n", C.getID(), A.getID(), B.getID(), AB.getID());
           System.out.printf("\t\tCyLen.\tActiv.\n");
@@ -719,13 +715,13 @@ public class Main {
         
       }
     
-      /*for(int i=0; (i<arrayA.size())&&(!found); i++){
+      for(int i=0; (i<arrayA.size())&&(!found); i++){
         for(int j=0; (j<arrayB.size())&&(!found); j++){
           System.out.printf("%.3f\t", P[i][j]/(Z+1));
         }
         System.out.printf("\n");
       }
-      System.out.printf("\n");*/
+      System.out.printf("\n");
 
       
       
@@ -950,15 +946,17 @@ public class Main {
     }
     
     Main m = new Main(numSpecies, 10, 2, initPop);
-    //Main m = new Main(numSpecies, 39, 18, 32, 100000, Double.parseDouble(suffix)/100);
+    //Main m = new Main(numSpecies, 13, 3, 14, 100000, Double.parseDouble(suffix)/100);
     
     
     //m.populationDistribution();
     int temp=0;
     
     
-    for(int i=0; i<50*initPop; i++){
+    for(int i=0; i<100*initPop; i++){
       //System.out.printf("bucket size %d\n", m.getNumSpecies());
+      
+      //temperature = 1 + 1*Math.sin( 0.00005*i );
       
       if(i%100==0){
         int[] sizeDistrb = m.molecularSizeDistrb();
@@ -969,6 +967,7 @@ public class Main {
           tempSizeDistrb[k+1]= (double)sizeDistrb[k];
         
         }
+        System.out.printf("%d\t%d\n", i, catalysisProductIndex);
         //System.out.printf("%d\t%d\n", i, m.getLibrary().size());
         
         double tempCL=0;
@@ -983,17 +982,23 @@ public class Main {
         CLarr[0] = i;
         CLarr[1] = tempCL;
         
-        String catStr = "";
         
-        for(int k=1; k<m.getLibrary().size(); k++){
-          catStr += ""+((double)m.getLibrary().get(k).getPop()/(double)m.getPopulation())+"\t";
+        
+        String catStr = ""+((double)m.getLibrary().get(1).getPop()/(double)m.getPopulation())+"\t"
+                  +((double)m.getLibrary().get(2).getPop()/(double)m.getPopulation());
+        
+        if(catalysisProductIndex != -1){
+          catStr += "\t"+((double)m.getLibrary().get(catalysisProductIndex).getPop()/(double)m.getPopulation())+"\n";
+        }
+        else{
+          catStr += "\n";
         }
         
         String librarySize = ""+i+"\t"+m.getLibrary().size();
         
         arr[0] = m.getNumReactions()-temp;
         arr[1] = m.getPopulation();
-        System.out.printf("%d\t%d\t%d\n",i, m.getNumReactions()-temp, m.getPopulation());
+        //System.out.printf("%d\t%d\t%d\n",i, m.getNumReactions()-temp, m.getPopulation());
         temp=m.getNumReactions();
         try{
           data.get(5).writeToFile( catStr );
@@ -1007,10 +1012,10 @@ public class Main {
           System.out.println("Could not write to file "+data.get(0).getPath());
         }
         
-        /*temperature -= 0.001;
+        
         if(temperature <0.001){
           temperature = 0.001;
-        }*/
+        }
         
         
       }
