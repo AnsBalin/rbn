@@ -23,7 +23,7 @@ public class Molecule{
     MoleculeID = new int[0];
     bondingSites = new int[0];
     state = 0;
-    StringID = toStringf();
+    //StringID = toStringf();
   }
   
   public Molecule(int NetworkID, Molecule M, Molecule N){
@@ -42,7 +42,7 @@ public class Molecule{
     else{
       size = M.getSize() + N.getSize();
     }
-    StringID = toStringf();
+    //StringID = toStringf();
     
   }
   

@@ -1,6 +1,7 @@
 
 import java.util.*;
 import java.io.*;
+import java.lang.*;
 
 public class Main {
   
@@ -14,6 +15,8 @@ public class Main {
   private static boolean reuse = false;
   private static String path = "/data/library/";
   private static String suffix = "";
+  
+  private ArrayList<ArrayList<Double>> matrix = new ArrayList<ArrayList<Double>>();
   
   
   private int product;
@@ -31,6 +34,10 @@ public class Main {
     
     numReactions=0;
     stats();
+    
+    for(int i=0; i<10; i++){
+      matrix.add(new ArrayList<Double>());
+    }
     
   }
   
@@ -88,8 +95,9 @@ public class Main {
   public int getPopulation(){return bucket.size();}
   public int getNumSpecies(){return library.size();}
   public int getNumReactions(){return numReactions;}
+  public ArrayList getMatrix(){return matrix;}
   
- public ArrayList<Reaction> getReactions(){return reactions;}
+  public ArrayList<Reaction> getReactions(){return reactions;}
   public ArrayList<Network> getLibrary(){return library;}
   public ArrayList<Molecule> getBucket(){return bucket;}
   
@@ -653,6 +661,8 @@ public class Main {
           bondingSites1 = net1.getBondingSites();
           bondingSites2 = net2.getBondingSites();
           
+      
+          
           //
           // Ordered choosing of bonding site.
           //
@@ -660,12 +670,12 @@ public class Main {
           //System.out.printf("%d\t%d\n", bondingSites1.length, bondingSites2.length);
           
           for(int k = bondingSites1.length-1; k>=0; k--){
-            //System.out.printf("%d\n", k);
+            //System.out.printf("\t\t%d\n", bondingSite1);
             bondingSite1 = net1.getNodes().get(bondingSites1[k]).getFilled()? bondingSite1 : bondingSites1[k];
           }
           
           for(int k = bondingSites2.length-1; k>=0; k--){
-            //System.out.printf("%d\n", k);
+           // System.out.printf("\t\t%d\n", k);
             bondingSite2 = net2.getNodes().get(bondingSites2[k]).getFilled()? bondingSite2 : bondingSites2[k];
             
           }
@@ -706,71 +716,37 @@ public class Main {
           
           //System.out.printf("%f\t%f\t%f\n", avCycleLengthBefore, exponent+avCycleLengthBefore, avCycleLengthAfter);
           
-          Z += Math.exp(-exponent/temperature);
-          P[i][j] = Z;
           
+          P[i][j] = Math.exp(-exponent/temperature);
+          Z += P[i][j];
+          //System.out.printf("\tbondingSite1:   %d\n", bondingSite1);
+          //System.out.printf("\tbondingSite2:   %d\n", bondingSite2);
+          matrix.get(net1.getNodes().get(bondingSite1).getNumOutputs()).add(new Double(avActivity));
+          matrix.get(net2.getNodes().get(bondingSite2).getNumOutputs()).add(new Double(avActivity));
+          //System.out.printf("NUMOUTPUTS:   %d\n", net2.getNodes().get(bondingSite2).getNumOutputs());
         
         }
         
         
       }
-    
+      
+      
+      
+      
       for(int i=0; (i<arrayA.size())&&(!found); i++){
         for(int j=0; (j<arrayB.size())&&(!found); j++){
           System.out.printf("%.3f\t", P[i][j]/(Z+1));
+          
         }
-        System.out.printf("\n");
+        //System.out.printf("\n");
       }
-      System.out.printf("\n");
+      //System.out.printf("\n");
 
       
       
       double rand = Math.random();
       
-      
-      for(int i=0; (i<arrayA.size())&&(!found); i++){
-        for(int j=0; (j<arrayB.size())&&(!found); j++){
-          if(P[i][j]/(Z+1)>rand){
-            //System.out.printf("\nDone!! [%d, %d]\n",i,j);
-            //Asub = new Molecule(arrayA.get(i));
-            //Bsub = new Molecule(arrayB.get(j));
-            Asub = arrayA.get(i);
-            Bsub = arrayB.get(j);
-            net1 = retrieve(Asub);
-            net2 = retrieve(Bsub);
             
-            net1.setState(Asub.getState());
-            net2.setState(Bsub.getState());
-            
-            bondingSites1 = net1.getBondingSites();
-            bondingSites2 = net2.getBondingSites();
-            
-            //
-            // Ordered choosing of bonding site.
-            //
-            
-            //System.out.printf("%d\t%d\n", bondingSites1.length, bondingSites2.length);
-            
-            for(int k = bondingSites1.length-1; k>=0; k--){
-              //System.out.printf("%d\n", k);
-              bondingSite1 = net1.getNodes().get(bondingSites1[k]).getFilled()? bondingSite1 : bondingSites1[k];
-            }
-            
-            for(int k = bondingSites2.length-1; k>=0; k--){
-              //System.out.printf("%d\n", k);
-              bondingSite2 = net2.getNodes().get(bondingSites2[k]).getFilled()? bondingSite2 : bondingSites2[k];
-              
-            }
-            
-            //System.out.printf("%d\t%d\t%d\t%d\n", arrayA.get(i).getSize(),arrayB.get(j).getSize(),bondingSite1,bondingSite2);
-            formBond(A, B, Asub, Bsub, bondingSite1, bondingSite2);
-            
-            found = true;
-          
-          }
-        }
-      }
-      
     }
   
   
@@ -930,12 +906,8 @@ public class Main {
       }
     }
     
-    data.add( new DataOutput("/data/numReactionsPop"+suffix+".txt", true) );
-    data.add( new DataOutput("/data/molecularSizeDistrb"+suffix+".txt", true) );
-    data.add( new DataOutput("/data/librarySize"+suffix+".txt", true) );
-    data.add( new DataOutput("/data/tempSizeDistrb_"+suffix+".txt", true) );
-    data.add( new DataOutput("/data/cyclelengths"+suffix+".txt", true) );
-    data.add( new DataOutput("/data/catalysis_"+suffix+".txt", true));
+    
+    data.add( new DataOutput("/data/probability_cyclelength"+suffix+".dat", true));
     
     for(int i=0; i<data.size(); i++){
       try{
@@ -946,77 +918,15 @@ public class Main {
     }
     
     Main m = new Main(numSpecies, 10, 2, initPop);
-    //Main m = new Main(numSpecies, 13, 3, 14, 100000, Double.parseDouble(suffix)/100);
-    
-    
-    //m.populationDistribution();
     int temp=0;
     
-    
-    for(int i=0; i<100*initPop; i++){
-      //System.out.printf("bucket size %d\n", m.getNumSpecies());
-      
-      //temperature = 1 + 1*Math.sin( 0.00005*i );
-      
-      if(i%100==0){
-        int[] sizeDistrb = m.molecularSizeDistrb();
-        double[] tempSizeDistrb = new double[sizeDistrb.length+1];
-        tempSizeDistrb[0]=temperature;
-        for(int k=0;k<sizeDistrb.length; k++){
-          
-          tempSizeDistrb[k+1]= (double)sizeDistrb[k];
+    ArrayList<ArrayList<Double>> matrixTemp = m.getMatrix();
+    int ii=0;
+    while(matrixTemp.get(6).size()<10000){
+      System.out.printf("!!!!"+matrixTemp.get(6).size());
+      if(ii%100==0){
         
-        }
-        System.out.printf("%d\t%d\n", i, catalysisProductIndex);
-        //System.out.printf("%d\t%d\n", i, m.getLibrary().size());
-        
-        double tempCL=0;
-        for(int k=0; k<m.getPopulation(); k++){
-        
-          Molecule M = m.getBucket().get(k);
-          tempCL += m.retrieve(M).getCycleLength()*M.getSize();
-          
-        }
-        
-        double[] CLarr = new double[2];
-        CLarr[0] = i;
-        CLarr[1] = tempCL;
-        
-        
-        
-        String catStr = ""+((double)m.getLibrary().get(1).getPop()/(double)m.getPopulation())+"\t"
-                  +((double)m.getLibrary().get(2).getPop()/(double)m.getPopulation());
-        
-        if(catalysisProductIndex != -1){
-          catStr += "\t"+((double)m.getLibrary().get(catalysisProductIndex).getPop()/(double)m.getPopulation())+"\n";
-        }
-        else{
-          catStr += "\n";
-        }
-        
-        String librarySize = ""+i+"\t"+m.getLibrary().size();
-        
-        arr[0] = m.getNumReactions()-temp;
-        arr[1] = m.getPopulation();
-        //System.out.printf("%d\t%d\t%d\n",i, m.getNumReactions()-temp, m.getPopulation());
-        temp=m.getNumReactions();
-        try{
-          data.get(5).writeToFile( catStr );
-          data.get(4).writeToFile( CLarr );
-          data.get(3).writeToFile( tempSizeDistrb );
-          data.get(2).writeToFile( librarySize );
-          data.get(1).writeToFile( sizeDistrb );
-          data.get(0).writeToFile( arr );
-        }
-        catch(IOException e){
-          System.out.println("Could not write to file "+data.get(0).getPath());
-        }
-        
-        
-        if(temperature <0.001){
-          temperature = 0.001;
-        }
-        
+        System.out.printf("%d\n", 10*initPop-ii);
         
       }
       
@@ -1031,56 +941,49 @@ public class Main {
         m.collide(A, B, false);
       }
       
-      
-      
-      unstable = m.selectRandMols(2);
-      
-      A = unstable.get(0);
-      B = unstable.get(1);
-      
-      //System.out.printf("\n\n|||||\t%d\n", m.getPopulation());
-      if( (A.getID()!=0) && (A.getSize()!=1) ){
-        m.breakUp(A);
-      }
-      if( (B.getID()!=0) && (B.getSize()!=1) ){
-        m.breakUp(B);
-      }
-      
-      //System.out.printf("|||||\t%d\n", m.getPopulation());
-      
+      ii++;
       
       
     }
     
-  
-    //m.reactionAnalysis();
     
+    ArrayList<ArrayList<Double>> matrix = m.getMatrix();
     
-    /*CLDistrb100 = m.cycleLengthDistrb();
-    
-    for(int i=0; (i<CLDistrb10.length || i<CLDistrb100.length); i++){
-    
-      if(i>=CLDistrb10.length){
-        System.out.printf("0\t");
-      }
-      else{
-        System.out.printf("%d\t", CLDistrb10[i]);
-        
-      }
-      if(i>=CLDistrb100.length){
-        System.out.printf("0\n");
-      }
-      else{
-        System.out.printf("%d\n", CLDistrb100[i]);
+    for(int i=0; i<10; i++){
+      
+      int foo = matrix.get(i).size();
+      double[] probability = new double[10000];
+      if(foo<10000){break;}
+      for(int j=0; j<10000; j++){
+        probability[j] = matrix.get(i).get(j).doubleValue();
+        System.out.printf("(%d, %d)\t%.4f\n", i, j, probability[j]);
         
       }
       
+      try{
+        
+        data.get(0).writeToFile(probability);
+      }catch(IOException e){
+        System.out.printf("Could not write to file.\n");
+        break;
+      }
       
-    }*/
+      
+    }
     
-    //m.populationDistribution();
-    //m.molecularSizeDistrb();
     
+    System.out.println("size 1: "+matrix.get(0).size());
+    System.out.println("size 2: "+matrix.get(1).size());
+    System.out.println("size 3: "+matrix.get(2).size());
+    System.out.println("size 4: "+matrix.get(3).size());
+    System.out.println("size 5: "+matrix.get(4).size());
+    System.out.println("size 6: "+matrix.get(5).size());
+    System.out.println("size 7: "+matrix.get(6).size());
+    System.out.println("size 8: "+matrix.get(7).size());
+    
+    
+    
+
   }
   
 }

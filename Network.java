@@ -47,6 +47,7 @@ public class Network implements Serializable{
   // and most highly ordered nodes are designated as bonding sites
   public Network(int numNodes, int NetworkID, int numBondingSites){
     
+    //System.out.printf("HI");
     this.numNodes = numNodes;
     this.NetworkID = NetworkID;
     this.numBondingSites = numBondingSites;
@@ -63,7 +64,7 @@ public class Network implements Serializable{
     
     //ASSUME Java initialises array to 0's
     int[] arr = new int[numNodes];
-    int index;
+    int index=0;;
     
     //Counts # of outputs of each node
     //System.out.printf("Counting # outputs per node...\n");
@@ -72,13 +73,22 @@ public class Network implements Serializable{
       for(int j=0; j<2; j++){
         index = nodes.get(i).getInputs()[j];
         arr[index]++;
+        
       }
     }
+    ///// BEGIN SECTION TO DELETE
+    for(int i=0; i<numNodes; i++){
+    
+      nodes.get(i).setNumOutputs(arr[i]);
+      
+    }
+    ////// END SECTION TO DELETE
+    
     
     // Tracks n = numBondingSites largest in single pass
     boolean inserted;
     //int[] arr_indeces = new int[numBondingSites]
-    for(int i=0; i<numNodes; i++){
+    /*for(int i=0; i<numNodes; i++){
       inserted = false;
       int j = 0;
       while(j<numBondingSites && !inserted){
@@ -93,14 +103,18 @@ public class Network implements Serializable{
         }
         j++;
       }
-    }
-    //System.out.printf("\n");
-    if(bondingSites[0]==0 && bondingSites[1]==0){System.out.printf("WTF???????\n");}
+    }*/
+    System.out.printf("\n");
     for(int j=0; j<numBondingSites; j++){
       
-      nodes.get(bondingSites[j]).setBondingSite(true);
-      nodes.get(bondingSites[j]).setFilled(false);
-    }
+      ////// OMG LOL DELETE THIS
+      bondingSites[j] =  (int)((Math.random()) * (numNodes-1));
+      System.out.printf("THIS IS %d\n", bondingSites[j]);
+      ////////////////////
+      
+      nodes.get(bondingSites[j]).setBondingSite(true); //CRUCIAL CHANGE!!!!!!!! WAS bondingSites[j] IN ARG BEFORE!!!!!///////////
+      nodes.get(bondingSites[j]).setFilled(false);  /////////////////////////////////////////////////////////////////////////////
+      }
     
     calculateCycleLength();
     calculateActivity();
