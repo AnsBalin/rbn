@@ -7,26 +7,26 @@ public class Global{
   //LOGIC     FF      FT      TF      TT
   //BINARY    00      01      10      11
   //INDEX     0       1       2       3
-  // lol
-  {false, false,  false,  false},
-  {false, false,  false,  true},
-  {false, false,  true,   false},
-  {false, false,  true,   true},
   
-  {false, true,   false,  false},
-  {false, true,   false,  true},
-  {false, true,   true,   false},
-  {false, true,   true,   true},
+              {false, false,  false,  false},   // OFF          1
+              {false, false,  false,  true},    // AND          2
+              {false, false,  true,   false},   // A AND ¬B     3
+              {false, false,  true,   true},    // A            4
+        
+              {false, true,   false,  false},   // ¬A AND B     5 
+              {false, true,   false,  true},    // B            6
+              {false, true,   true,   false},   // XOR          7
+              {false, true,   true,   true},    // OR           8
   
-  {true,  false,  false,  false},
-  {true,  false,  false,  true},
-  {true,  false,  true,   false},
-  {true,  false,  true,   true},
+              {true,  false,  false,  false},   // NOR          9
+              {true,  false,  false,  true},    // XNOR         10
+              {true,  false,  true,   false},   // ¬B           11
+              {true,  false,  true,   true},    // ¬A NAND B    12
   
-  {true,  true,   false,  false},
-  {true,  true,   false,  true},
-  {true,  true,   true,   false},
-  {true,  true,   true,   true},
+              {true,  true,   false,  false},   // ¬A           13
+              {true,  true,   false,  true},    // A NAND ¬B    14
+              {true,  true,   true,   false},   // NAND         15
+              {true,  true,   true,   true},    // ON           16
   };
   
   public static String[] chars = {"0","A","B","C","D","E","F","G","H",
@@ -47,8 +47,12 @@ public class Global{
         System.out.printf("%b\t", lookUp[x][y]);
       }
       System.out.printf("\n");
-      
     }
+    
+    for(int i=0; i<1000; i++){
+      System.out.printf("\r%d", i);
+    }
+    System.out.printf("\n");
   }
   
 }

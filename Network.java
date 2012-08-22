@@ -104,12 +104,12 @@ public class Network implements Serializable{
         j++;
       }
     }*/
-    System.out.printf("\n");
+    //System.out.printf("\n");
     for(int j=0; j<numBondingSites; j++){
       
       ////// OMG LOL DELETE THIS
       bondingSites[j] =  (int)((Math.random()) * (numNodes-1));
-      System.out.printf("THIS IS %d\n", bondingSites[j]);
+      //System.out.printf("THIS IS %d\n", bondingSites[j]);
       ////////////////////
       
       nodes.get(bondingSites[j]).setBondingSite(true); //CRUCIAL CHANGE!!!!!!!! WAS bondingSites[j] IN ARG BEFORE!!!!!///////////
