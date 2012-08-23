@@ -10,7 +10,7 @@ public class Main {
   private int numReactions;
   private static int catalysisProductIndex=-1;
   private static boolean foundCatalysisProduct  = false;
-  private static double temperature = 1;
+  public static double temperature = 1;
   private static boolean reuse = false;
   private static String path = "/data/library/";
   private static String suffix = "";
@@ -23,11 +23,11 @@ public class Main {
     
     System.out.printf("\n\tPopulating library...\n");
     populateLibrary(numSpecies, numNodes, numBondingSites);
-    System.out.printf("\tLibrary successfully populated with:\n\t\t%d Species\n\t\t%d nodes each\n\t\t%d bonding sites each", numSpecies, numNodes, numBondingSites);
+    System.out.printf("\n\tLibrary successfully populated with:\n\t\t%d Species\n\t\t%d nodes each\n\t\t%d bonding sites each", numSpecies, numNodes, numBondingSites);
     
     System.out.printf("\n\n\tPopulating world...\n");
     populateWorld(numMolecules, numSpecies);
-    System.out.printf("\tWorld successfully populated with %d atoms.\n", numMolecules);
+    System.out.printf("\n\tWorld successfully populated with %d atoms.\n", numMolecules);
     
     numReactions=0;
     stats();
@@ -88,8 +88,7 @@ public class Main {
   public int getPopulation(){return bucket.size();}
   public int getNumSpecies(){return library.size();}
   public int getNumReactions(){return numReactions;}
-  
- public ArrayList<Reaction> getReactions(){return reactions;}
+  public ArrayList<Reaction> getReactions(){return reactions;}
   public ArrayList<Network> getLibrary(){return library;}
   public ArrayList<Molecule> getBucket(){return bucket;}
   
@@ -125,24 +124,29 @@ public class Main {
     
     if(!reuse){
       library.add(new Network(0));
-    
       for(int i=1; i<numSpecies; i++){
         library.add(new Network(numNodes, i, numBondingSites));
+        progress("Adding...", i, numSpecies);
+        
       
       }
+      progress("Adding...", numSpecies, numSpecies);
     
       for(int i=0; i<numSpecies; i++){
         DataOutput out = new DataOutput("/data/library/"+i+".txt");
-      
+        progress("Saving...", i, numSpecies);
+        
         try{
           out.writeToFile(library.get(i));
         }catch(IOException e){System.out.println("Could not write file.");}
       }
+      progress("Saving...", numSpecies, numSpecies);
+      
     }
     else{
       
       for(int i=0; i<numSpecies; i++){
-          
+        progress("Retrieving...", i, numSpecies);
         DataOutput in = new DataOutput(path+i+".txt");
         try{
           library.add(in.readFile());
@@ -154,6 +158,7 @@ public class Main {
         }
         
       }
+      progress("Retrieving...", numSpecies, numSpecies);
       
     }
     
@@ -168,6 +173,7 @@ public class Main {
     bucket.add(nullMolecule);
     
     for(int i=1; i<numMolecules; i++){
+      progress("Spawning...", i, numMolecules);
       rand = (int) (Math.random()*(double)(numSpecies-1)) + 1;
       bucket.add(new Molecule(rand , nullMolecule, nullMolecule));
       bucket.get(i).calculateMoleculeID(0,0, new int[0]);
@@ -175,6 +181,7 @@ public class Main {
       //String str = bucket.get(i).toString();
       //System.out.printf(str);
     }
+    progress("Spawning...", numMolecules, numMolecules);
   }
   
   public void stats(){
@@ -471,7 +478,7 @@ public class Main {
         bucket.add(molsB.get(i));
         products.add(molsB.get(i));
         library.get(molsB.get(i).getID()).incrPop();
-        //System.out.printf(""+molsB.get(i).toStringf()+" + ");
+       // System.out.printf(""+molsB.get(i).toStringf()+" + ");
       }
     
     
@@ -567,7 +574,7 @@ public class Main {
             
           }
           
-          System.out.printf("\n\tMolecule %d catalyses the reaction %d + %d --> %d\n", C.getID(), A.getID(), B.getID(), AB.getID());
+          /*System.out.printf("\n\tMolecule %d catalyses the reaction %d + %d --> %d\n", C.getID(), A.getID(), B.getID(), AB.getID());
           System.out.printf("\t\tCyLen.\tActiv.\n");
           System.out.printf("\tA\t%.2f\t%.2f\n", cA, aA);
           System.out.printf("\tB\t%.2f\t%.2f\n", cB, aB);
@@ -575,7 +582,7 @@ public class Main {
           System.out.printf("\tAB\t%.2f\t%.2f\n", cAB, aAB);
           System.out.printf("\tAC\t%.2f\t%.2f\n", cAC, aAC);
           System.out.printf("\tA1: %f\n", A1);
-          System.out.printf("\tA2+A3: %f\n", A2+A3);
+          System.out.printf("\tA2+A3: %f\n", A2+A3);*/
           
         
         }
@@ -715,13 +722,13 @@ public class Main {
         
       }
     
-      for(int i=0; (i<arrayA.size())&&(!found); i++){
+      /*for(int i=0; (i<arrayA.size())&&(!found); i++){
         for(int j=0; (j<arrayB.size())&&(!found); j++){
           System.out.printf("%.3f\t", P[i][j]/(Z+1));
         }
         System.out.printf("\n");
       }
-      System.out.printf("\n");
+      System.out.printf("\n");*/
 
       
       
@@ -871,6 +878,31 @@ public class Main {
   
   }
   
+  public static void progress(String process, int i, int N){
+    
+    double k=0;
+    
+    System.out.printf("\r");
+    String outputString;
+    
+    outputString = "\t";
+    for(k=0; k<=(double)i; k+=(double)N/50){
+      
+      outputString+="█";
+      
+    }
+    while(k<=N){
+      
+      outputString+="-";
+      k+=(double)N/50;
+    }
+    System.out.printf("%20s "+outputString+" %d%%", process, (int)(100*((double)i/(double)N)));
+    
+    
+  }
+
+  
+  
   public static void main(String args[]){
     
     ArrayList<Molecule> reactants = new ArrayList<Molecule>();
@@ -947,7 +979,7 @@ public class Main {
     
     Main m = new Main(numSpecies, 10, 2, initPop);
     //Main m = new Main(numSpecies, 13, 3, 14, 100000, Double.parseDouble(suffix)/100);
-    
+    m.getReactions().add(new Reaction());
     
     //m.populationDistribution();
     int temp=0;
@@ -967,7 +999,7 @@ public class Main {
           tempSizeDistrb[k+1]= (double)sizeDistrb[k];
         
         }
-        System.out.printf("%d\t%d\n", i, catalysisProductIndex);
+        m.progress("Colliding...", i, 100*initPop);
         //System.out.printf("%d\t%d\n", i, m.getLibrary().size());
         
         double tempCL=0;
@@ -1052,6 +1084,7 @@ public class Main {
       
     }
     
+    m.progress("Colliding...", 100*initPop, 100*initPop);
   
     //m.reactionAnalysis();
     
