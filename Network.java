@@ -95,7 +95,7 @@ public class Network implements Serializable{
       }
     }
     //System.out.printf("\n");
-    if(bondingSites[0]==0 && bondingSites[1]==0){System.out.printf("WTF???????\n");}
+    if(bondingSites[0]==0 && bondingSites[1]==0){System.out.printf("Error...\n");}
     for(int j=0; j<numBondingSites; j++){
       
       nodes.get(bondingSites[j]).setBondingSite(true);
@@ -114,6 +114,9 @@ public class Network implements Serializable{
     
     this.bondingSites = Arrays.copyOf(bondingSites, bondingSites.length);
     numBondingSites = bondingSites.length;
+    
+    calculateCycleLength();
+    calculateActivity();
   }
   
   public ArrayList<Node> copyNodes(){

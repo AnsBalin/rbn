@@ -238,13 +238,9 @@ public class Graph{
     switch(option){
     
       case 0:
-        
         if(R.getCount() > arg){
-        
           result = true;
-        
         }
-      
         break;
     
     
@@ -300,23 +296,18 @@ public class Graph{
      
       
       
-      if(g.filter(m.getReactions().get(i), 0, 5)){
+      if(g.filter(m.getReactions().get(i), 0, 10)){
         g.add(m.getReactions().get(i), m);
       }
       
     }
-  
     //m.progress("Graph build", m.getReactions().size(), m.getReactions().size());
     System.out.printf("\n");
     System.out.printf("\tPerforming DFS...\n");
     g.dfs();
     System.out.printf("\tNumber of cycles: %d\n", g.getNumCycles());
     
-    
-  
   }
-
-
 
 }
 

@@ -7,9 +7,8 @@ public class Global{
   //LOGIC     FF      FT      TF      TT
   //BINARY    00      01      10      11
   //INDEX     0       1       2       3
-  // lol
-  {false, false,  false,  false},
-  {false, false,  false,  true},
+              {false, false,  false,  false},
+              {false, false,  false,  true},
   {false, false,  true,   false},
   {false, false,  true,   true},
   
