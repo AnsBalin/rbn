@@ -14,6 +14,7 @@ public class Graph{
     private Object contents;
     private int type;
     private int ID;
+    private int nodeIndex;
     private String StringID;
     private ArrayList children;
     private ArrayList parents;
@@ -28,7 +29,7 @@ public class Graph{
       type = _NULL_;
     }
     
-    public GraphNode(Molecule o){
+    public GraphNode(Molecule o, int nodeIndex){
       
       contents = new Molecule(o);
       type = _MOLECULE_;
@@ -37,9 +38,10 @@ public class Graph{
       colour = 0;
       ID = o.getID();
       StringID = o.getStringID();
+      this.nodeIndex = nodeIndex;
       
     }
-    public GraphNode(Reaction o){
+    public GraphNode(Reaction o, int nodeIndex){
       
       contents = new Reaction(o);
       type = _REACTION_;
@@ -48,6 +50,7 @@ public class Graph{
       colour = 0;
       ID = o.getIntID();
       StringID = o.getID();
+      this.nodeIndex = nodeIndex;
       
     }
     
@@ -58,7 +61,9 @@ public class Graph{
     public int getID(){
       return ID;
     }
-    
+    public int getNodeIndex(){
+      return nodeIndex;
+    }
     public int getType(){
       return type;
     }
@@ -99,15 +104,18 @@ public class Graph{
   } 
   
   private ArrayList<GraphNode> graphNodes;
+  private ArrayList<int[]> cycles;
   private int numCycles;
   private int visited=0;
+  private ArrayList<GraphNode> buffer;
   
   public Graph(){
     
     graphNodes = new ArrayList<GraphNode>();
     graphNodes.add(new GraphNode());
     numCycles = 0;
-    
+    buffer = new ArrayList<GraphNode>();
+    cycles = new ArrayList<int[]>();
   }
   
   public int checkReactionID(int IDCheck){
@@ -137,6 +145,7 @@ public class Graph{
   }
   
   public ArrayList<GraphNode> getGraphNodes(){return graphNodes;}
+  public ArrayList<int[]> getCycles(){return cycles;}
   
   public void add(Reaction R, Main m){
     
@@ -145,7 +154,8 @@ public class Graph{
    
     if(index==-1){                               // ie. if R isnt in Graph
       index=graphNodes.size();
-      graphNodes.add(new GraphNode(new Reaction(R)));  // NEW INSTANCE OF R IS ADDED
+      graphNodes.add(new GraphNode(new Reaction(R), index));  // NEW INSTANCE OF R IS ADDED
+      //R.printReaction();
     }
     
     for(int i=0; i<R.getReactants().length; i++){
@@ -155,7 +165,7 @@ public class Graph{
       
       if(reactantIndex==-1){    // ie. if reactant isnt in graph
         reactantIndex = graphNodes.size();
-        graphNodes.add(new GraphNode(new Molecule(m.getLibrary().get(IDCheck).getMol())));   // NEW INSTANCE OF MOLECULE IS ADDED
+        graphNodes.add(new GraphNode(new Molecule(m.getLibrary().get(IDCheck).getMol()), reactantIndex));   // NEW INSTANCE OF MOLECULE IS ADDEDx
       }
       
       //System.out.printf("(%d) is a parent of (%d)\n", reactantIndex, index);
@@ -170,7 +180,7 @@ public class Graph{
       
       if(productIndex==-1){
         productIndex = graphNodes.size();
-        graphNodes.add(new GraphNode(new Molecule(m.getLibrary().get(IDCheck).getMol())));
+        graphNodes.add(new GraphNode(new Molecule(m.getLibrary().get(IDCheck).getMol()), productIndex));
       }
       //if(index==1){System.out.printf("\n(1) has another child` ie %d child!!!!\n", R.getProducts().length);}
       //if(index==0){System.out.printf("!!!!!!!!\n");}
@@ -181,42 +191,53 @@ public class Graph{
   
   }
   
+  public void bufferSave(GraphNode child){
+
+    int i=0;
+    while(!buffer.get(i).equals(child)){
+      i++;
+    }
+    
+    int k=0;
+    int[] temp = new int[buffer.size() - i];
+    while(i<buffer.size()){
+    
+      temp[k] = buffer.get(i).getNodeIndex();
+      k++;
+      i++;
+    }
+    cycles.add(temp);
+    
+  }
+  
   // Performs a depth-first-search of this graph
   public void dfs(){
     int depth;
     for(int i=0; i<graphNodes.size(); i++){
-      //if(graphNodes.get(i).getChildren()!=null){System.out.printf("// (%d) has %d children\n", i, graphNodes.get(i).getChildren().size());}
       if((graphNodes.get(i).getColour()==0)&&(graphNodes.get(i).getChildren()!=null)){
         depth = 1;
+        buffer.clear();
         dfsVisit(graphNodes.get(i), depth);
-        
       }
     }
-  
   }
+  
+  
   
   public void dfsVisit(GraphNode GN, int depth){
     GN.colour(depth);
-    //System.out.printf("\n");
-    //for(int z=0; z<depth; z++){System.out.printf("\t");}
-    //System.out.printf("(%d) - depth = %d\n", graphNodes.indexOf(GN), depth);
-    
+    buffer.add(GN);
     ArrayList<GraphNode> children = GN.getChildren();
     
     for(int i=0; i<children.size(); i++){
       
       if((children.get(i).getColour()==0)&&(children.get(i).getChildren()!=null)){
-        //for(int z=0; z<depth; z++){System.out.printf("\t");}
-        //System.out.printf("Visting child %d of (%d)\n", i, graphNodes.indexOf(GN));
-       
-        dfsVisit(children.get(i), depth+1);
+         dfsVisit(children.get(i), depth+1);
       }
-      //System.out.printf("!!%d\n", children.get(i).getColour());
-      if(children.get(i).getColour()>0){
+      
+      else if(children.get(i).getColour()>0){
         numCycles++;
-        //for(int z=0; z<depth; z++){System.out.printf("\t");}
-        //System.out.printf("Child %d of (%d) is (%d)\n", i, graphNodes.indexOf(GN), graphNodes.indexOf(children.get(i)));
-        //for(int z=0; z<depth; z++){System.out.printf("\t");}
+        bufferSave(children.get(i));
         System.out.printf("%d\n", GN.getColour()- children.get(i).getColour()+1);
         
       }
@@ -224,10 +245,9 @@ public class Graph{
       else{} 
     
     }
-    
+    buffer.remove(GN);
     GN.colour(-1);
     visited++;
-    //Main.progress("Visiting nodes", visited, graphNodes.size());
     
   }  
   
@@ -251,24 +271,61 @@ public class Graph{
   
   }
  
+  public void printCycle(int cycleIndex, Main m){
+    int[] temp = cycles.get(cycleIndex);
+    
+    System.out.printf("\t Cycle %d:\n", cycleIndex);
+    for(int i=0; i<temp.length; i++){
+    
+      if(graphNodes.get(temp[i]).getType()== _REACTION_){
+        System.out.printf("\t");
+        m.getReactions().get( graphNodes.get(temp[i]).getID() ).printReaction();
+      
+      }
+    
+    }
+    System.out.printf("\n");
+  
+  }
+  
+  public boolean contains(int[] cycle, int size, Main m){
+  
+    boolean result = false;
+    
+    for(int i=0; i<cycle.length; i++){
+    
+      if(graphNodes.get(cycle[i]).getType()==_MOLECULE_){
+      
+        if( m.getLibrary().get( graphNodes.get(cycle[i]).getID() ).getNumNodes() > size*10 ){
+          
+          result = true;
+        
+        }
+      
+      }
+    
+    }
+    return result;
+  
+  }
   
   public static void main(String args[]){
     
-    int pop = 1000;
-    Main m = new Main(5, 10, 2, pop);
+    int pop = 5000;
+    Main m = new Main(50, 10, 2, pop);
     m.getReactions().add(new Reaction());
-    m.temperature = 1000;
+    m.temperature = 1;
     
     for(int i=0; i<100*pop; i++){
       if(i%100==0){
-        m.progress("Running...", i, 100*pop);
+       m.progress("Running...", i, 100*pop);
       }
       
       if(m.getBucket().size()==2){
         break;
       }
 
-      ArrayList<Molecule> reactants;
+      ArrayList<Molecule> reactants, unstable;
       reactants = m.selectRandMols(2);
       
       Molecule A, B;
@@ -280,9 +337,23 @@ public class Graph{
         m.collide(A, B, false);
       }
       
-      for(int j=0; j<m.getBucket().size(); j++){
+      /*for(int j=0; j<m.getBucket().size(); j++){
         m.getLibrary().get( m.getBucket().get(j).getID() ).setMol(new Molecule(  m.getBucket().get(j) ) );
+      }*/
+      
+      unstable = m.selectRandMols(2);
+      
+      A = unstable.get(0);
+      B = unstable.get(1);
+      
+      //System.out.printf("\n\n|||||\t%d\n", m.getPopulation());
+      if( (A.getID()!=0) && (A.getSize()!=1) ){
+        m.breakUp(A);
       }
+      if( (B.getID()!=0) && (B.getSize()!=1) ){
+        m.breakUp(B);
+      }
+
     }
     
     m.progress("Running...", 10000,10000);
@@ -294,18 +365,26 @@ public class Graph{
       //if(i%10==0){m.progress("Graph build", i, m.getReactions().size());}
       Reaction X = new Reaction();
      
-      
-      
-      if(g.filter(m.getReactions().get(i), 0, 10)){
+      if(g.filter(m.getReactions().get(i), 0, 1)){
         g.add(m.getReactions().get(i), m);
       }
       
     }
+
     //m.progress("Graph build", m.getReactions().size(), m.getReactions().size());
     System.out.printf("\n");
     System.out.printf("\tPerforming DFS...\n");
     g.dfs();
     System.out.printf("\tNumber of cycles: %d\n", g.getNumCycles());
+    
+    for(int i=0; i<g.getCycles().size(); i++){
+      
+      if(g.contains(g.getCycles().get(i), 1, m)){
+        g.printCycle(i, m);
+      }
+      
+    
+    }
     
   }
 

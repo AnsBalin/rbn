@@ -122,10 +122,13 @@ public class Main {
   // If generateNew != 0    Use species from previous run
   public void populateLibrary(int numSpecies, int numNodes, int numBondingSites){
     
+    Molecule nullMolecule = new Molecule();
+    
     if(!reuse){
       library.add(new Network(0));
       for(int i=1; i<numSpecies; i++){
         library.add(new Network(numNodes, i, numBondingSites));
+        library.get(i).setMol(new Molecule(i, nullMolecule, nullMolecule));
         progress("Adding...", i, numSpecies);
         
       
@@ -181,6 +184,7 @@ public class Main {
       //String str = bucket.get(i).toString();
       //System.out.printf(str);
     }
+    
     progress("Spawning...", numMolecules, numMolecules);
   }
   
@@ -341,7 +345,7 @@ public class Main {
   
   //Checks to see if Network A is in the library and if it isn't, add's it
   //returns index of where Network A is in the library if/when added
-  public int libraryUpdate(Network A){
+  public int libraryUpdate(Network A, Molecule Asub, Molecule Bsub){
     int index=-1;
     int i = 0;
     while (index==-1 && i<library.size()){
@@ -353,7 +357,7 @@ public class Main {
     if(index == -1){
       library.add(A);
       index = library.size()-1;
-      
+      library.get(index).setMol(new Molecule( index, Asub, Bsub ) );
     }
     
     return index;
@@ -382,7 +386,6 @@ public class Main {
     
     
   }
-  
   
   public Network retrieve(int NetworkID){
     
@@ -426,7 +429,6 @@ public class Main {
   
   }
   
-  
   public void formBond(Molecule A, Molecule B, Molecule Asub, Molecule Bsub, int bondingSite1, int bondingSite2){
     
     
@@ -457,7 +459,7 @@ public class Main {
     reactants.add(A);
     reactants.add(B);
     //
-    //System.out.printf("\n\t"+A.toStringf()+" + "+B.toStringf()+" --> ");
+    System.out.printf("\n\t"+A.toStringf()+" + "+B.toStringf()+" --> ");
     bucket.remove(A);
     bucket.remove(B);
     library.get(A.getID()).decrPop();
@@ -470,7 +472,7 @@ public class Main {
       bucket.add(molsA.get(i));
       products.add(molsA.get(i));
       library.get(molsA.get(i).getID()).incrPop();
-      //System.out.printf(""+molsA.get(i).toStringf()+" + ");
+      System.out.printf(""+molsA.get(i).toStringf()+" + ");
     }
     
     for(int i=0; i<molsB.size(); i++){
@@ -478,12 +480,12 @@ public class Main {
         bucket.add(molsB.get(i));
         products.add(molsB.get(i));
         library.get(molsB.get(i).getID()).incrPop();
-       // System.out.printf(""+molsB.get(i).toStringf()+" + ");
+        System.out.printf(""+molsB.get(i).toStringf()+" + ");
       }
     
     
     
-    int index = libraryUpdate(after.get(after.size()-1));
+    int index = libraryUpdate(after.get(after.size()-1), Asub, Bsub);
     bucket.add(new Molecule(index, Asub, Bsub));
     library.get(index).incrPop();
     bucket.get(bucket.size()-1).setSize(Asub.getSize()+Bsub.getSize());
@@ -496,24 +498,8 @@ public class Main {
     int reactionIndex = reactionsUpdate(R);
     reactions.get(reactionIndex).incrCount();
     
-    
-    /*if(reactions.get(reactionIndex).getCount()==1){
-        String str1="";
-        str1 += reactions.get(reactionIndex).getMolReactants().get(0).toStringf()+" + "+
-                reactions.get(reactionIndex).getMolReactants().get(1).toStringf()+" --> ";
-        
-        str1 += reactions.get(reactionIndex).getMolProducts().get(0).toStringf();
-        for(int i=1; i<reactions.get(reactionIndex).getMolProducts().size(); i++){
-          str1 += " + "+reactions.get(reactionIndex).getMolProducts().get(i).toStringf();
-        }
-        
-        System.out.printf(""+str1+"\n");
-      }*/
-    
-    //System.out.printf(""+products.get(0).toStringf()+"\t%d\n", products.get(0).getID());
-    //System.out.printf(""+bucket.get(bucket.size()-1).toStringf()+"\n");
-    //System.out.printf("index: %d\nreaction #: %d\n", index, products.get(products.size()-).getID());
-    //System.out.printf("\t"+reactions.get(reactionIndex).getID()+"\n");
+
+    System.out.printf(""+bucket.get(bucket.size()-1).toStringf()+"\n");
 
     
   }
@@ -714,7 +700,7 @@ public class Main {
           //System.out.printf("%f\t%f\t%f\n", avCycleLengthBefore, exponent+avCycleLengthBefore, avCycleLengthAfter);
           
           Z += Math.exp(-exponent/temperature);
-          P[i][j] = Z;
+          P[i][j] = Math.exp(-exponent/temperature);
           
         
         }
@@ -782,7 +768,6 @@ public class Main {
   
   
   }
-  
   
   public void breakUp(Molecule A){
     
@@ -869,9 +854,9 @@ public class Main {
       //library.get(bucket.get(bucket.size()-1).getID()).incrPop();
       
       
-      Reaction R = new Reaction(reactants, products);
-      int reactionIndex = reactionsUpdate(R);
-      reactions.get(reactionIndex).incrCount();
+      //Reaction R = new Reaction(reactants, products, this);
+      //int reactionIndex = reactionsUpdate(R);
+      //reactions.get(reactionIndex).incrCount();
       
     
     }
@@ -901,8 +886,6 @@ public class Main {
     
   }
 
-  
-  
   public static void main(String args[]){
     
     ArrayList<Molecule> reactants = new ArrayList<Molecule>();
@@ -999,7 +982,7 @@ public class Main {
           tempSizeDistrb[k+1]= (double)sizeDistrb[k];
         
         }
-        m.progress("Colliding...", i, 100*initPop);
+        //m.progress("Colliding...", i, 100*initPop);
         //System.out.printf("%d\t%d\n", i, m.getLibrary().size());
         
         double tempCL=0;

@@ -39,7 +39,7 @@ public class Reaction{
     for(int i=0; i<this.reactants.length; i++){
       str = str+this.reactants[i]+" ";
     }
-    str = str+"> ";
+    str = str+"--> ";
     
     for(int i=0; i<this.products.length; i++){
       str = str+this.products[i]+" ";
@@ -48,6 +48,37 @@ public class Reaction{
     ID = str;
     count=0;
   
+  }
+  
+  public Reaction(int[] reactants, int[] products, Main m){
+    
+    this.reactants = reactants;
+    this.products = products;
+    
+    Arrays.sort(reactants);
+    Arrays.sort(products);
+    
+    
+    String str = "";
+    
+    for(int i=0; i<this.reactants.length; i++){
+      str = str+m.getLibrary().get(this.reactants[i]).getMol().getStringID();
+      if(i<this.reactants.length-1){
+        str += " + ";
+      }
+    }
+    str = str+"--> ";
+    
+    for(int i=0; i<this.products.length; i++){
+      str = str+m.getLibrary().get(this.products[i]).getMol().getStringID();
+      if(i<this.products.length-1){
+        str += " + ";
+      }
+    }
+    
+    ID = str;
+    count=0;
+    
   }
   
   public Reaction(ArrayList<Molecule> reactants, ArrayList<Molecule> products){
@@ -85,7 +116,53 @@ public class Reaction{
     ID = str;
     count=0;
   
+  
   }
+  
+  public Reaction(ArrayList<Molecule> reactants, ArrayList<Molecule> products, Main m){
+    
+    this.reactants = new int[reactants.size()];
+    this.products = new int[products.size()];
+    
+    molReactants = reactants;
+    molProducts = products;
+    
+    for(int i=0; i<this.reactants.length; i++){
+      
+      this.reactants[i] = reactants.get(i).getID();
+      
+    }
+    
+    for(int i=0; i<this.products.length; i++){
+      
+      this.products[i] = products.get(i).getID();
+    }
+    
+    Arrays.sort(this.reactants);
+    Arrays.sort(this.products);
+    
+    String str = "";
+    
+    for(int i=0; i<this.reactants.length; i++){
+      str = str+m.getLibrary().get(this.reactants[i]).getMol().getStringID();
+      if(i<this.reactants.length-1){
+        str += " + ";
+      }
+    }
+    str = str+"--> ";
+    
+    for(int i=0; i<this.products.length; i++){
+      str = str+m.getLibrary().get(this.products[i]).getMol().getStringID();
+      if(i<this.products.length-1){
+        str += " + ";
+      }
+    }
+    
+    ID = str;
+    count=0;
+    
+  }
+
   
   public int getCount(){
     return count;
@@ -154,6 +231,21 @@ public class Reaction{
     return result;
     
   }
+  
+  public void printReaction(){
+  
+    System.out.printf(""+molReactants.get(0).toStringf()+" + "+molReactants.get(1).toStringf()+" --> ");
+    
+    System.out.printf(""+molProducts.get(0).toStringf());
+    for(int i=1; i< molProducts.size(); i++){
+    
+      System.out.printf(" + "+molProducts.get(i).toStringf());
+    }
+  
+  
+    System.out.printf("\n");
+  }
+  
   
   public static void main(String args[]){
     

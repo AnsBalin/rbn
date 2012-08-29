@@ -1,7 +1,8 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.io.*;
 
-public class Molecule{
+public class Molecule implements Serializable{
   
   boolean flag;
   int NetworkID;
