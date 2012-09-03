@@ -311,14 +311,16 @@ public class Graph{
   
   public static void main(String args[]){
     
-    int pop = 5000;
-    Main m = new Main(50, 10, 2, pop);
-    m.getReactions().add(new Reaction());
-    m.temperature = 1;
+    int pop = 500;
+    int iterations = 1000*pop;
     
-    for(int i=0; i<100*pop; i++){
+    Main m = new Main(5, 10, 2, pop);
+    m.getReactions().add(new Reaction());
+    m.temperature = 3;
+    
+    for(int i=0; i<iterations; i++){
       if(i%100==0){
-       m.progress("Running...", i, 100*pop);
+       m.progress("Running...", i, iterations);
       }
       
       if(m.getBucket().size()==2){

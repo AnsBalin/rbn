@@ -14,6 +14,8 @@ public class Main {
   private static boolean reuse = false;
   private static String path = "/data/library/";
   private static String suffix = "";
+  public static final ScreenPrinter sp = new ScreenPrinter();
+  
   
   
   private int product;
@@ -21,16 +23,24 @@ public class Main {
   // Constructor adds null network to library, with index 0
   public Main(int numSpecies, int numNodes, int numBondingSites, int numMolecules){
     
-    System.out.printf("\n\tPopulating library...\n");
+    //System.out.printf("\n\tPopulating library...\n");
+    sp.print("Populating library...", 0, 1);
     populateLibrary(numSpecies, numNodes, numBondingSites);
-    System.out.printf("\n\tLibrary successfully populated with:\n\t\t%d Species\n\t\t%d nodes each\n\t\t%d bonding sites each", numSpecies, numNodes, numBondingSites);
+    sp.print("Populating populated with:", 0, 1);
+    sp.print(String.format("\t%d species", numSpecies), 0, 2);
+    sp.print(String.format("\t%d nodes each", numNodes), 0, 3);
+    sp.print(String.format("\t%d bonding sites each", numBondingSites), 0, 3);
+    //System.out.printf("\n\tLibrary successfully populated with:\n\t\t%d Species\n\t\t%d nodes each\n\t\t%d bonding sites each", numSpecies, numNodes, numBondingSites);
     
-    System.out.printf("\n\n\tPopulating world...\n");
+    //System.out.printf("\n\n\tPopulating world...\n");
+    sp.print("Populating world...", 1, 1);
     populateWorld(numMolecules, numSpecies);
-    System.out.printf("\n\tWorld successfully populated with %d atoms.\n", numMolecules);
+    sp.print("World populated with:", 1, 1);
+    sp.print(String.format("\t%d atoms", numMolecules), 1, 2);
+    //System.out.printf("\n\tWorld successfully populated with %d atoms.\n", numMolecules);
     
     numReactions=0;
-    stats();
+    //stats();
     
   }
   
@@ -129,27 +139,27 @@ public class Main {
       for(int i=1; i<numSpecies; i++){
         library.add(new Network(numNodes, i, numBondingSites));
         library.get(i).setMol(new Molecule(i, nullMolecule, nullMolecule));
-        progress("Adding...", i, numSpecies);
+        //progress("Adding...", i, numSpecies);
         
       
       }
-      progress("Adding...", numSpecies, numSpecies);
-    
+      //progress("Adding...", numSpecies, numSpecies);
+      sp.print("Saving networks...", 0, 1);
       for(int i=0; i<numSpecies; i++){
         DataOutput out = new DataOutput("/data/library/"+i+".txt");
-        progress("Saving...", i, numSpecies);
+        //progress("Saving...", i, numSpecies);
         
         try{
           out.writeToFile(library.get(i));
         }catch(IOException e){System.out.println("Could not write file.");}
       }
-      progress("Saving...", numSpecies, numSpecies);
+      //progress("Saving...", numSpecies, numSpecies);
       
     }
     else{
-      
+      sp.print("Retrieving networks...", 0, 1);
       for(int i=0; i<numSpecies; i++){
-        progress("Retrieving...", i, numSpecies);
+        //progress("Retrieving...", i, numSpecies);
         DataOutput in = new DataOutput(path+i+".txt");
         try{
           library.add(in.readFile());
@@ -161,7 +171,7 @@ public class Main {
         }
         
       }
-      progress("Retrieving...", numSpecies, numSpecies);
+      //progress("Retrieving...", numSpecies, numSpecies);
       
     }
     
@@ -174,9 +184,9 @@ public class Main {
     
     Molecule nullMolecule = new Molecule();
     bucket.add(nullMolecule);
-    
+    sp.print("Spawning atoms...", 1, 1);
     for(int i=1; i<numMolecules; i++){
-      progress("Spawning...", i, numMolecules);
+      //progress("Spawning...", i, numMolecules);
       rand = (int) (Math.random()*(double)(numSpecies-1)) + 1;
       bucket.add(new Molecule(rand , nullMolecule, nullMolecule));
       bucket.get(i).calculateMoleculeID(0,0, new int[0]);
@@ -185,7 +195,7 @@ public class Main {
       //System.out.printf(str);
     }
     
-    progress("Spawning...", numMolecules, numMolecules);
+    //progress("Spawning...", numMolecules, numMolecules);
   }
   
   public void stats(){
@@ -257,6 +267,16 @@ public class Main {
     System.out.printf("\tStd. Dev.\t%.2f\t\t%.2f\n\n", cycleLengthStdDev, activityStdDev);
     
     
+  }
+  
+  public void oscillateTemp(double max, double min, double period, int time){
+  
+    double A = max - min;
+    double c = max + min;
+    
+    temperature = 0.5 * ( A * Math.sin( 2 * Math.PI * ((double)time/period) ) +c );
+  
+  
   }
   
   public int[] molecularSizeDistrb(){
@@ -432,6 +452,7 @@ public class Main {
   public void formBond(Molecule A, Molecule B, Molecule Asub, Molecule Bsub, int bondingSite1, int bondingSite2){
     
     
+    String reaction = "";
     
     A.calculateMoleculeID(0,0,new int[0]);
     B.calculateMoleculeID(0,0, new int[0]);
@@ -443,7 +464,6 @@ public class Main {
       //System.out.printf("!!!!!!!!!!!! %d\n", molsA.size());
       
     }
-    //System.out.printf(""+Arrays.toString(Asub.getMolID())+"\n");
     
     ArrayList<Network> after = new ArrayList<Network>();
     
@@ -458,8 +478,11 @@ public class Main {
     
     reactants.add(A);
     reactants.add(B);
-    //
-    System.out.printf("\n\t"+A.toStringf()+" + "+B.toStringf()+" --> ");
+    
+    /////
+    reaction += A.toStringf()+" + "+B.toStringf()+" --> ";
+    /////
+    
     bucket.remove(A);
     bucket.remove(B);
     library.get(A.getID()).decrPop();
@@ -472,16 +495,19 @@ public class Main {
       bucket.add(molsA.get(i));
       products.add(molsA.get(i));
       library.get(molsA.get(i).getID()).incrPop();
-      System.out.printf(""+molsA.get(i).toStringf()+" + ");
+      //
+      reaction += molsA.get(i).toStringf()+" + ";
+      //
     }
     
     for(int i=0; i<molsB.size(); i++){
         
-        bucket.add(molsB.get(i));
-        products.add(molsB.get(i));
-        library.get(molsB.get(i).getID()).incrPop();
-        System.out.printf(""+molsB.get(i).toStringf()+" + ");
-      }
+      bucket.add(molsB.get(i));
+      products.add(molsB.get(i));
+      library.get(molsB.get(i).getID()).incrPop();
+        //
+      reaction+=molsB.get(i).toStringf()+" + ";
+    }
     
     
     
@@ -499,7 +525,20 @@ public class Main {
     reactions.get(reactionIndex).incrCount();
     
 
-    System.out.printf(""+bucket.get(bucket.size()-1).toStringf()+"\n");
+    //
+    reaction += bucket.get(bucket.size()-1).toStringf();
+    //
+    
+    if(reaction.length()>59){
+      reaction = reaction.substring(0, 59);
+    }
+    else{
+      while (reaction.length()<59){
+        reaction+=" ";
+      }
+    }
+    sp.print("                                                        ", 4 ,1);
+    sp.print(reaction, 4, 1);
 
     
   }
@@ -660,7 +699,6 @@ public class Main {
           for(int k = bondingSites2.length-1; k>=0; k--){
             //System.out.printf("%d\n", k);
             bondingSite2 = net2.getNodes().get(bondingSites2[k]).getFilled()? bondingSite2 : bondingSites2[k];
-            
           }
           
           
@@ -907,26 +945,27 @@ public class Main {
     //
     // Command-line arguments
     //
-    System.out.printf("\n\n\tInterpreting input arguments...\n\n");
+    //System.out.printf("\n\n\tInterpreting input arguments...\n\n");
+    sp.print("Interpreting input arguments", 0, 1);
     for(int i=0; i<args.length; i++){
       String str = args[i];
       if(str.startsWith("temp=")){
         temperature = Double.parseDouble(str.substring(5));
-        System.out.printf("\t\tTemperature = %.2f\n",temperature);
+        //System.out.printf("\t\tTemperature = %.2f\n",temperature);
       }
       
       else if(str.startsWith("initPop=")){
         initPop = Integer.parseInt(str.substring(8));
-        System.out.printf("\t\tInitial population = %d\n",initPop);
+        //System.out.printf("\t\tInitial population = %d\n",initPop);
       }
       
       else if(str.startsWith("numSpecies=")){
         numSpecies = Integer.parseInt(str.substring(11));
-        System.out.printf("\t\tInitial # of species = %d\n", numSpecies );
+        //System.out.printf("\t\tInitial # of species = %d\n", numSpecies );
       }
       else if (str.startsWith("fileSuffix=")){
         suffix=str.substring(11);
-        System.out.printf("\t\tSaving files with suffix"+suffix);
+        //System.out.printf("\t\tSaving files with suffix"+suffix);
       }
       
       else if(str.startsWith("reuse")){
@@ -934,13 +973,13 @@ public class Main {
         if(str.length()>5){
           path = str.substring(5);
           reuse = true;
-          System.out.printf("\t\tRe-using previous RBNs saved in path "+path+"\n");
+          //System.out.printf("\t\tRe-using previous RBNs saved in path "+path+"\n");
           
         }
         
         else{
           reuse = true;
-          System.out.printf("\t\tRe-using previous RBNs saved in path "+path+"\n");
+          //System.out.printf("\t\tRe-using previous RBNs saved in path "+path+"\n");
         }
       }
     }
@@ -956,24 +995,34 @@ public class Main {
       try{
         data.get(i).clearFile();
       }catch(IOException e){
-        System.out.println("Could not clear file "+data.get(i).getPath()+"\n");
+        //System.out.println("Could not clear file "+data.get(i).getPath()+"\n");
       }  
     }
     
     Main m = new Main(numSpecies, 10, 2, initPop);
+    
     //Main m = new Main(numSpecies, 13, 3, 14, 100000, Double.parseDouble(suffix)/100);
     m.getReactions().add(new Reaction());
     
     //m.populationDistribution();
     int temp=0;
+    int numCollisions = 10*initPop;
     
-    
-    for(int i=0; i<100*initPop; i++){
-      //System.out.printf("bucket size %d\n", m.getNumSpecies());
+    for(int i=0; i<numCollisions; i++){
       
-      //temperature = 1 + 1*Math.sin( 0.00005*i );
+      sp.print("Colliding...", 2, 1);
+      sp.print(String.format("Temperature = %.2f", m.temperature), 2, 2);
+      sp.print(String.format("Library size = %d", m.getLibrary().size()), 2, 3);
+      
+      sp.print(String.format("# collisions = %d", i), 3, 1);
+      sp.print(String.format("Population = %d", m.getPopulation()), 3, 2);
+      sp.print(String.format("# reactions = %d", m.getReactions().size()), 3, 3);
+      
+      m.oscillateTemp(3, 0.7, 5000, i);
       
       if(i%100==0){
+        
+        sp.print(sp.progress(i, numCollisions), 4, 3);
         int[] sizeDistrb = m.molecularSizeDistrb();
         double[] tempSizeDistrb = new double[sizeDistrb.length+1];
         tempSizeDistrb[0]=temperature;
@@ -982,8 +1031,9 @@ public class Main {
           tempSizeDistrb[k+1]= (double)sizeDistrb[k];
         
         }
+        
         //m.progress("Colliding...", i, 100*initPop);
-        //System.out.printf("%d\t%d\n", i, m.getLibrary().size());
+        //System.out.printf("\tTemperature = %.3f", m.temperature);
         
         double tempCL=0;
         for(int k=0; k<m.getPopulation(); k++){
@@ -1067,7 +1117,7 @@ public class Main {
       
     }
     
-    m.progress("Colliding...", 100*initPop, 100*initPop);
+    //m.progress("Colliding...", 100*initPop, 100*initPop);
   
     //m.reactionAnalysis();
     

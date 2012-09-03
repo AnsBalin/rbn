@@ -1,0 +1,155 @@
+	Number of cycles: 742
+	 Cycle 89:
+	AA + BC --> A + A[BC]
+	B + A[BC] --> A + B[BC]
+	B + B[BC] --> B[B[BC]]
+	B + B[B[BC]] --> B[B[B[BC]]]
+	A + B[B[B[BC]]] --> A[B[B[B[BC]]]]
+	A + A[B[B[B[BC]]]] --> B[B[B[BC]]] + AA
+
+	 Cycle 90:
+	A + B[B[B[BC]]] --> A[B[B[B[BC]]]]
+	A + A[B[B[B[BC]]]] --> B[B[B[BC]]] + AA
+
+	 Cycle 91:
+	D + A --> DA
+	DA + BC --> D + B + AC
+	D + D --> DD
+	A + DD --> D + AD
+	[BC]B + AD --> B + D + [BC]A
+	[BC]A + B --> A + [BC]B
+	DD + [BC]B --> BC + [DD]B
+	B + [DD]B --> B + B[DD]
+	A + B[DD] --> B + A[DD]
+	D + A[DD] --> A + D[DD]
+	D[DD] + AC --> D + [DD][AC]
+	A + [DD][AC] --> AC + A[DD]
+	AC + B --> [AC]B
+	A + [AC]B --> B + A[AC]
+	A + A[AC] --> AC + AA
+	AA + BC --> A + A[BC]
+	B + A[BC] --> A + B[BC]
+	B + B[BC] --> B[B[BC]]
+	B + B[B[BC]] --> B[B[B[BC]]]
+	A + B[B[B[BC]]] --> A[B[B[B[BC]]]]
+	A + A[B[B[B[BC]]]] --> A + A[B[B[B[BC]]]]
+
+	 Cycle 92:
+	A + A[B[B[B[BC]]]] --> A + A[B[B[B[BC]]]]
+
+	 Cycle 94:
+	D + A --> DA
+	DA + BC --> D + B + AC
+	D + D --> DD
+	A + DD --> D + AD
+	[BC]B + AD --> B + D + [BC]A
+	[BC]A + B --> A + [BC]B
+	DD + [BC]B --> BC + [DD]B
+	B + [DD]B --> B + B[DD]
+	A + B[DD] --> B + A[DD]
+	D + A[DD] --> A + D[DD]
+	D[DD] + AC --> D + [DD][AC]
+	A + [DD][AC] --> AC + A[DD]
+	AC + B --> [AC]B
+	A + [AC]B --> B + A[AC]
+	A + A[AC] --> AC + AA
+	AA + BC --> A + A[BC]
+	B + A[BC] --> B[A[BC]]
+	B[A[BC]] + AD --> D + [B[A[BC]]]A
+	B + [B[A[BC]]]A --> A + B[B[A[BC]]]
+
+	 Cycle 475:
+	D + A --> DA
+	DA + BC --> D + B + AC
+	D + D --> DD
+	A + DD --> D + AD
+	[BC]B + AD --> B + D + [BC]A
+	[BC]A + B --> A + [BC]B
+	DD + [BC]B --> BC + [DD]B
+	B + [DD]B --> B + B[DD]
+	A + B[DD] --> B + A[DD]
+	D + A[DD] --> A + D[DD]
+	D[DD] + AC --> D + [DD][AC]
+	A + [DD][AC] --> A[[DD][AC]]
+	A + A[[DD][AC]] --> A + AC + D + AD
+
+	 Cycle 476:
+	D + D --> DD
+	A + DD --> D + AD
+	[BC]B + AD --> B + D + [BC]A
+	[BC]A + B --> A + [BC]B
+	DD + [BC]B --> BC + [DD]B
+	B + [DD]B --> B + B[DD]
+	A + B[DD] --> B + A[DD]
+	D + A[DD] --> A + D[DD]
+	D[DD] + AC --> D + [DD][AC]
+	A + [DD][AC] --> A[[DD][AC]]
+	A + A[[DD][AC]] --> A + AC + D + AD
+
+	 Cycle 477:
+	[BC]B + AD --> B + D + [BC]A
+	[BC]A + B --> A + [BC]B
+	DD + [BC]B --> BC + [DD]B
+	B + [DD]B --> B + B[DD]
+	A + B[DD] --> B + A[DD]
+	D + A[DD] --> A + D[DD]
+	D[DD] + AC --> D + [DD][AC]
+	A + [DD][AC] --> A[[DD][AC]]
+	A + A[[DD][AC]] --> A + AC + D + AD
+
+	 Cycle 508:
+	C + B --> CB
+	CB + A --> B + CA
+	D + CA --> C + DA
+	CA + C --> [CA]C
+	[CA]C + CA --> CA + C[CA]
+	C[CA] + AC --> A + [C[CA]]C
+	D + A --> DA
+	DA + BC --> D + B + AC
+	D + D --> DD
+	A + DD --> D + AD
+	[BC]B + AD --> B + D + [BC]A
+	[BC]A + B --> A + [BC]B
+	DD + [BC]B --> BC + [DD]B
+	B + [DD]B --> B + B[DD]
+	CB + B[DD] --> C + B[B[DD]]
+	B + B[B[DD]] --> B[B[B[DD]]]
+	A + B[B[B[DD]]] --> B + A[B[B[DD]]]
+
+	 Cycle 620:
+	[CA]C + CA --> CA + C[CA]
+	C[CA] + AC --> A + [C[CA]]C
+	D + A --> DA
+	DA + BC --> D + B + AC
+	D + D --> DD
+	[CA]C + DD --> [[CA]C][DD]
+	A + [[CA]C][DD] --> [CA]C + A[DD]
+
+	 Cycle 640:
+	D + D --> DD
+	C[CA] + DD --> [C[CA]][DD]
+	[C[CA]][DD] + A --> C[CA] + D + DA
+
+	 Cycle 641:
+	DA + BC --> D + B + AC
+	D + D --> DD
+	C[CA] + DD --> [C[CA]][DD]
+	[C[CA]][DD] + A --> C[CA] + D + DA
+
+	 Cycle 642:
+	C[CA] + AC --> A + [C[CA]]C
+	D + A --> DA
+	DA + BC --> D + B + AC
+	D + D --> DD
+	C[CA] + DD --> [C[CA]][DD]
+	[C[CA]][DD] + A --> C[CA] + D + DA
+
+	 Cycle 698:
+	A + A[[CB][D[DD]]] --> A + A[[CB][D[DD]]]
+
+	 Cycle 740:
+	B + B[A[B[D[DD]]]] --> B[B[A[B[D[DD]]]]]
+	B + B[B[A[B[D[DD]]]]] --> B + B[B[A[B[D[DD]]]]]
+
+	 Cycle 741:
+	B + B[B[A[B[D[DD]]]]] --> B + B[B[A[B[D[DD]]]]]
