@@ -1,0 +1,102 @@
+2
+13:06:11; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+
+13:17:55; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:17:55; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:17:56; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:17:56; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:17:56; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:17:56; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:17:57; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:17:57; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:17:57; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:17:57; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:17:58; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:18:32; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:18:32; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:18:33; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:18:33; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:18:33; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:18:34; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:18:34; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:18:34; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:18:34; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:18:35; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:18:35; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:18:58; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:19:03; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:19:09; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:19:14; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:19:19; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:19:24; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:19:29; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:19:34; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:19:39; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:19:44; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+13:19:49; 01:00:00ms; temperature 1.23; fileSuffix asdasda
+asd;
+asd;
+asd;
+asd;
+asd;
+asd;
+asd;
+[14:28:13]; 01:00:00ms; temperature 0.10; fileSuffix 1
+[14:28:36]; 01:00:00ms; temperature 0.10; fileSuffix 1
+[14:28:56]; 01:00:00ms; temperature 0.10; fileSuffix 1
+[14:29:32]; 01:00:00ms; temperature 0.10; fileSuffix 1
+[14:29:40]; 01:00:00ms; temperature 0.20; fileSuffix 2
+[14:33:43]; 01:00:00ms; temperature 1.00; fileSuffix 
+[14:37:36]; 0ms; temperature 1.00; fileSuffix 
+[14:38:29]; 15702ms; temperature 1.00; fileSuffix 
+[14:43:15]; 23950ms; temperature 0.10; fileSuffix 1
+[14:43:41]; 19789ms; temperature 0.20; fileSuffix 2
+[14:44:01]; 19936ms; temperature 0.30; fileSuffix 3
+[14:44:23]; 19419ms; temperature 0.40; fileSuffix 4
+[14:44:44]; 17699ms; temperature 0.50; fileSuffix 5
+[14:45:02]; 18214ms; temperature 0.60; fileSuffix 6
+[14:45:22]; 17188ms; temperature 0.70; fileSuffix 7
+[14:45:40]; 13586ms; temperature 0.80; fileSuffix 8
+[14:45:54]; 12889ms; temperature 0.90; fileSuffix 9
+[14:46:08]; 14285ms; temperature 1.00; fileSuffix 10
+[14:46:25]; 12906ms; temperature 1.10; fileSuffix 11
+[14:46:39]; 12070ms; temperature 1.20; fileSuffix 12
+[14:46:53]; 14358ms; temperature 1.30; fileSuffix 13
+[14:47:09]; 14930ms; temperature 1.40; fileSuffix 14
+[14:47:25]; 14504ms; temperature 1.50; fileSuffix 15
+[14:47:41]; 14562ms; temperature 1.60; fileSuffix 16
+[14:47:57]; 11333ms; temperature 1.70; fileSuffix 17
+[14:48:10]; 11759ms; temperature 1.80; fileSuffix 18
+[14:48:22]; 15010ms; temperature 1.90; fileSuffix 19
+[14:48:38]; 14179ms; temperature 2.00; fileSuffix 20
+[14:48:54]; 13193ms; temperature 2.10; fileSuffix 21
+[14:49:08]; 12004ms; temperature 2.20; fileSuffix 22
+[14:49:22]; 12401ms; temperature 2.30; fileSuffix 23
+[14:49:37]; 10366ms; temperature 2.40; fileSuffix 24
+[14:49:49]; 10442ms; temperature 2.50; fileSuffix 25
+[14:50:01]; 12605ms; temperature 2.60; fileSuffix 26
+[14:50:15]; 16598ms; temperature 2.70; fileSuffix 27
+[14:50:33]; 14922ms; temperature 2.80; fileSuffix 28
+[14:50:50]; 12817ms; temperature 2.90; fileSuffix 29
+[14:51:04]; 10739ms; temperature 3.00; fileSuffix 30
+[14:51:16]; 11744ms; temperature 3.10; fileSuffix 31
+[14:51:28]; 11935ms; temperature 3.20; fileSuffix 32
+[14:51:42]; 10353ms; temperature 3.30; fileSuffix 33
+[14:51:54]; 9299ms; temperature 3.40; fileSuffix 34
+[14:52:04]; 9724ms; temperature 3.50; fileSuffix 35
+[14:52:15]; 11752ms; temperature 3.60; fileSuffix 36
+[14:52:27]; 11681ms; temperature 3.70; fileSuffix 37
+[14:52:39]; 11794ms; temperature 3.80; fileSuffix 38
+[14:52:51]; 11482ms; temperature 3.90; fileSuffix 39
+[14:53:03]; 11835ms; temperature 4.00; fileSuffix 40
+[14:53:15]; 11627ms; temperature 4.10; fileSuffix 41
+[14:53:28]; 11882ms; temperature 4.20; fileSuffix 42
+[14:53:40]; 11090ms; temperature 4.30; fileSuffix 43
+[14:53:52]; 11908ms; temperature 4.40; fileSuffix 44
+[14:54:06]; 9885ms; temperature 4.50; fileSuffix 45
+[14:54:16]; 11983ms; temperature 4.60; fileSuffix 46
+[14:54:30]; 21357ms; temperature 4.70; fileSuffix 47
+[14:54:53]; 12094ms; temperature 4.80; fileSuffix 48
+[14:55:07]; 10738ms; temperature 4.90; fileSuffix 49
+[14:55:19]; 10941ms; temperature 5.00; fileSuffix 50
+[14:55:31]; 10946ms; temperature 5.10; fileSuffix 51

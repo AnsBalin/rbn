@@ -1,6 +1,7 @@
 
 import java.util.*;
 import java.io.*;
+import java.sql.Time;
 
 public class Main {
   
@@ -459,7 +460,7 @@ public class Main {
     reactants.add(A);
     reactants.add(B);
     //
-    System.out.printf("\n\t"+A.toStringf()+" + "+B.toStringf()+" --> ");
+    //System.out.printf("\n\t"+A.toStringf()+" + "+B.toStringf()+" --> ");
     bucket.remove(A);
     bucket.remove(B);
     library.get(A.getID()).decrPop();
@@ -472,7 +473,7 @@ public class Main {
       bucket.add(molsA.get(i));
       products.add(molsA.get(i));
       library.get(molsA.get(i).getID()).incrPop();
-      System.out.printf(""+molsA.get(i).toStringf()+" + ");
+     // System.out.printf(""+molsA.get(i).toStringf()+" + ");
     }
     
     for(int i=0; i<molsB.size(); i++){
@@ -480,7 +481,7 @@ public class Main {
         bucket.add(molsB.get(i));
         products.add(molsB.get(i));
         library.get(molsB.get(i).getID()).incrPop();
-        System.out.printf(""+molsB.get(i).toStringf()+" + ");
+       // System.out.printf(""+molsB.get(i).toStringf()+" + ");
       }
     
     
@@ -499,7 +500,7 @@ public class Main {
     reactions.get(reactionIndex).incrCount();
     
 
-    System.out.printf(""+bucket.get(bucket.size()-1).toStringf()+"\n");
+    //System.out.printf(""+bucket.get(bucket.size()-1).toStringf()+"\n");
 
     
   }
@@ -888,6 +889,12 @@ public class Main {
 
   public static void main(String args[]){
     
+    boolean scriptTemp=false;
+    
+    Date d = new Date();
+    Time t1 = new Time(d.getHours(), d.getMinutes(), d.getSeconds());
+    long t2 = d.getTime();
+    
     ArrayList<Molecule> reactants = new ArrayList<Molecule>();
     ArrayList<Molecule> unstable = new ArrayList<Molecule>();
     ArrayList<DataOutput> data = new ArrayList<DataOutput>();
@@ -912,6 +919,9 @@ public class Main {
       String str = args[i];
       if(str.startsWith("temp=")){
         temperature = Double.parseDouble(str.substring(5));
+        if(scriptTemp){
+          temperature = temperature/10;
+        }
         System.out.printf("\t\tTemperature = %.2f\n",temperature);
       }
       
@@ -919,7 +929,10 @@ public class Main {
         initPop = Integer.parseInt(str.substring(8));
         System.out.printf("\t\tInitial population = %d\n",initPop);
       }
-      
+      else if(str.startsWith("scriptTemp")){
+        scriptTemp=true;
+        System.out.printf("\t\tInitial population = %d\n",initPop);
+      }
       else if(str.startsWith("numSpecies=")){
         numSpecies = Integer.parseInt(str.substring(11));
         System.out.printf("\t\tInitial # of species = %d\n", numSpecies );
@@ -951,7 +964,8 @@ public class Main {
     data.add( new DataOutput("/data/tempSizeDistrb_"+suffix+".txt", true) );
     data.add( new DataOutput("/data/cyclelengths"+suffix+".txt", true) );
     data.add( new DataOutput("/data/catalysis_"+suffix+".txt", true));
-    
+    data.add( new DataOutput("/data/experiment2/"+suffix+".txt", true));
+ 
     for(int i=0; i<data.size(); i++){
       try{
         data.get(i).clearFile();
@@ -968,12 +982,12 @@ public class Main {
     int temp=0;
     
     
-    for(int i=0; i<100*initPop; i++){
+    for(int i=0; i<10*initPop; i++){
       //System.out.printf("bucket size %d\n", m.getNumSpecies());
       
       //temperature = 1 + 1*Math.sin( 0.00005*i );
       
-      if(i%100==0){
+      if(i%10==0){
         int[] sizeDistrb = m.molecularSizeDistrb();
         double[] tempSizeDistrb = new double[sizeDistrb.length+1];
         tempSizeDistrb[0]=temperature;
@@ -982,7 +996,8 @@ public class Main {
           tempSizeDistrb[k+1]= (double)sizeDistrb[k];
         
         }
-        //m.progress("Colliding...", i, 100*initPop);
+        m.progress("Colliding...", i, 10*initPop);
+        System.out.printf("\t%.2f", m.temperature);
         //System.out.printf("%d\t%d\n", i, m.getLibrary().size());
         
         double tempCL=0;
@@ -990,6 +1005,7 @@ public class Main {
         
           Molecule M = m.getBucket().get(k);
           tempCL += m.retrieve(M).getCycleLength()*M.getSize();
+          
           
         }
         
@@ -1070,32 +1086,23 @@ public class Main {
     m.progress("Colliding...", 100*initPop, 100*initPop);
   
     //m.reactionAnalysis();
-    
-    
-    /*CLDistrb100 = m.cycleLengthDistrb();
-    
-    for(int i=0; (i<CLDistrb10.length || i<CLDistrb100.length); i++){
-    
-      if(i>=CLDistrb10.length){
-        System.out.printf("0\t");
-      }
-      else{
-        System.out.printf("%d\t", CLDistrb10[i]);
-        
-      }
-      if(i>=CLDistrb100.length){
-        System.out.printf("0\n");
-      }
-      else{
-        System.out.printf("%d\n", CLDistrb100[i]);
-        
-      }
-      
-      
-    }*/
-    
+    try{
+      data.get(6).writeToFile( m.cycleLengthDistrb() );
+    }catch(IOException e){}
     //m.populationDistribution();
     //m.molecularSizeDistrb();
+    
+    
+    DataOutput log = new DataOutput("log.txt", true);
+    Date b = new Date();
+    long t3 = b.getTime();
+    try{
+      
+      log.writeToFile( String.format("["+t1.toString()+"]; "+(t3-t2)+"ms; temperature %.2f; fileSuffix %s", m.temperature, suffix) );
+
+    
+    }catch(IOException e){System.out.printf("couldnt write to log.txt\n");}
+    
     
   }
   

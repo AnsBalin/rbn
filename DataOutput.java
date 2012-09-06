@@ -58,7 +58,7 @@ public class DataOutput{
     FileWriter write = new FileWriter(path, append);
     PrintWriter print_line = new PrintWriter(write);
     
-    print_line.printf(""+str+"\n");
+    print_line.printf("%s\n", str);
     print_line.close();
   
   }
