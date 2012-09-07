@@ -2,6 +2,7 @@
 import java.util.*;
 import java.io.*;
 import java.lang.*;
+import java.sql.Time;
 
 public class Main {
   
@@ -625,6 +626,15 @@ public class Main {
   
   public static void main(String args[]){
     
+    
+    
+    boolean scriptTemp=false;
+    
+    Date d = new Date();
+    Time t1 = new Time(d.getHours(), d.getMinutes(), d.getSeconds());
+    long t2 = d.getTime();
+    
+    
     ArrayList<Molecule> reactants = new ArrayList<Molecule>();
     ArrayList<Molecule> unstable = new ArrayList<Molecule>();
     ArrayList<DataOutput> data = new ArrayList<DataOutput>();
@@ -665,6 +675,9 @@ public class Main {
         suffix=str.substring(11);
         System.out.printf("\t\tSaving files with suffix"+suffix);
       }
+      else if (str.startsWith("scriptTemp")){
+        scriptTemp=true;
+      }
       
       else if(str.startsWith("reuse")){
       
@@ -683,11 +696,10 @@ public class Main {
     }
     
     
-    data.add( new DataOutput("/data/numOutputsRange"+suffix+".dat", true));
-    data.add( new DataOutput("/data/numOutputsMean"+suffix+".dat", true));
-    data.add( new DataOutput("/data/functionRange"+suffix+".dat", true));
-    data.add( new DataOutput("/data/functionMean"+suffix+".dat", true));
-    
+    data.add( new DataOutput("/data/experiment3/numOutputsRange"+suffix+".dat", true));
+    data.add( new DataOutput("/data/experiment3/numOutputsMean"+suffix+".dat", true));
+    data.add( new DataOutput("/data/experiment3/functionRange"+suffix+".dat", true));
+    data.add( new DataOutput("/data/experiment3/functionMean"+suffix+".dat", true));
     for(int i=0; i<data.size(); i++){
       try{
         data.get(i).clearFile();
@@ -697,7 +709,9 @@ public class Main {
     }
     
     Main m = new Main(numSpecies, 10, 2, initPop);
-    
+    if(scriptTemp){
+      m.temperature = m.temperature/10;
+    }
     ArrayList<ArrayList<Double>> matrixTemp = m.getMatrix1();
     int ii=0;
     while(ii<100*initPop){
@@ -756,7 +770,16 @@ public class Main {
     System.out.println("size 7: "+matrix.get(6).size());
     System.out.println("size 8: "+matrix.get(7).size());*/
     
-    
+    DataOutput log = new DataOutput("log.txt", true);
+    Date b = new Date();
+    long t3 = b.getTime();
+    try{
+      
+      log.writeToFile( String.format("["+t1.toString()+"]; "+(t3-t2)+"ms; temperature %.2f; fileSuffix %s", m.temperature, suffix) );
+      
+      
+    }catch(IOException e){System.out.printf("couldnt write to log.txt\n");}
+
     
 
   }
